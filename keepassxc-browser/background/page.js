@@ -15,9 +15,9 @@ const defaultSettings = {
     redirectAllowance: 1,
     saveDomainOnly: true,
     showLoginFormIcon: true,
-    showLoginNotifications: true,
+    showLoginNotifications: false,
     showNotifications: true,
-    showOTPIcon: true,
+    showOTPIcon: false,
     useObserver: true,
     usePredefinedSites: true,
     usePasswordGeneratorIcons: false
