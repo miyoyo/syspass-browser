@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
-    "name": "KeePassXC-Browser",
+    "name": "sysPass-Browser",
     "version": "1.7.4",
     "version_name": "1.7.4",
     "description": "__MSG_extensionDescription__",
-    "author": "KeePassXC Team",
+    "author": "KeePassXC Team, Miyoyo",
     "icons": {
         "16": "icons/keepassxc_16x16.png",
         "48": "icons/keepassxc_48x48.png",
@@ -22,7 +22,7 @@
             "38": "icons/keepassxc_38x38.png",
             "64": "icons/keepassxc_64x64.png"
         },
-        "default_title": "KeePassXC-Browser",
+        "default_title": "sysPass-Browser",
         "default_popup": "popups/popup.html"
     },
     "options_ui": {
