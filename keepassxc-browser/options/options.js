@@ -349,6 +349,21 @@ options.initConnectedDatabases = function() {
     }
 
     $('#connect-button').click(async function() {
+        const url = document.getElementById("sysPassURL").value
+        const apiKey = document.getElementById("sysPassAPIKey").value
+        const apiKeyPass = document.getElementById("sysPassAPIKeyPass").value
+
+        if(apiKeyPass === "Password") return;
+
+        options.keyRing = {}
+        options.keyRing[apiKey] = {
+                "id": url,
+                "hash": apiKey,
+                "key": apiKeyPass
+            }
+        
+        await options.saveKeyRing();
+
         const result = await browser.runtime.sendMessage({ action: 'associate' });
 
         if (result === AssociatedAction.NEW_ASSOCIATION) {
@@ -368,6 +383,12 @@ options.initConnectedDatabases = function() {
             }
         }
     });
+
+    if(Object.keys(options.keyRing).length > 0) {
+        document.getElementById("sysPassURL").value = options.keyRing[Object.keys(options.keyRing)[0]].id;
+        document.getElementById("sysPassAPIKey").value = options.keyRing[Object.keys(options.keyRing)[0]].hash;
+        document.getElementById("sysPassAPIKeyPass").value = "Password"
+    }
 };
 
 options.initCustomCredentialFields = function() {

@@ -27,7 +27,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse d-none d-md-block" id="sidebar">
-            <h1 class="text-uppercase text-white-50 d-none d-md-flex px-3 pb-4 mt-4 mb-1 ">KeePassXC-Browser</h1>
+            <h1 class="text-uppercase text-white-50 d-none d-md-flex px-3 pb-4 mt-4 mb-1 ">sysPass-Browser</h1>
             <ul class="nav flex-column mb-2 text-uppercase">
               <li class="active nav-item"><a class="nav-link text-light rounded-sm" href="#general-settings" tabindex="1"><i class="fa fa-ellipsis-h fa-lg pr-2" aria-hidden="true"></i><span data-i18n="optionsMenuGeneral"></span></a></li>
               <li class="nav-item"><a class="nav-link text-light rounded-sm" href="#connected-databases" tabindex="2"><i class="fa fa-link fa-lg pr-2" aria-hidden="true"></i><span data-i18n="optionsMenuConnectedDatabases"></span></a></li>
@@ -36,7 +36,8 @@
               <li class="nav-item"><a class="nav-link text-light rounded-sm" href="#about" tabindex="5"><i class="fa fa-info-circle fa-lg pr-2" aria-hidden="true"></i><span data-i18n="optionsMenuAbout"></span></a></li>
             </ul>
             <footer class="d-none d-md-flex px-3 mt-4 mb-1 text-uppercase position-absolute small text-muted">
-              (C) 2017-2020 - KeePassXC Team
+              (C) 2017-2020 - KeePassXC Team<br>
+              © 2020 - Miyoyo
             </footer>
           </div>
         </nav>
@@ -223,48 +224,6 @@
 
               <div class="card my-4 shadow">
                 <div class="card-header h6 rounded-0">
-                  <i class="fa fa-clock-o" aria-hidden="true"></i>
-                  <span data-i18n="optionsUpdatesTitle"></span>
-                </div>
-                <div class="card-body">
-                  <div class="help-block kphVersion">
-                      <p>
-                      <span data-i18n="optionsVersionInfoText"></span>
-                      <br />
-                      <span data-i18n="optionsVersionDownload" i18n-placeholder="<a target='_blank' href='https://keepassxc.org/'>https://keepassxc.org/</a>"></span>
-                    </p>
-                    <p>
-                      <span data-i18n="optionsVersionRunning" i18n-placeholder="<em class='yourVersion'></em>"></span>
-                    </p>
-                    <p>
-                      <span data-i18n="optionsLatestVersion" i18n-placeholder="<em class='latestVersion'></em>"></span>
-                    </p>
-                      <button class="btn btn-sm btn-success checkUpdateKeePassXC"><i class="fa fa-refresh" aria-hidden="true"></i><span data-i18n="optionsButtonUpdate"></span></button>
-                    <div class="mt-3">
-                      <div data-i18n="optionsRadioText"></div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio1" value="3">
-                        <label class="form-check-label" for="inlineRadio1"><span data-i18n="optionsRadioThreeDays"></span></label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio2" value="7">
-                        <label class="form-check-label" for="inlineRadio2"><span data-i18n="optionsRadioWeek"></span></label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio3" value="30">
-                        <label class="form-check-label" for="inlineRadio3"><span data-i18n="optionsRadioMonth"></span></label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="inlineRadio4" value="0">
-                        <label class="form-check-label" for="inlineRadio4"><span data-i18n="optionsRadioNever"></span></label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card my-4 shadow">
-                <div class="card-header h6 rounded-0">
                   <i class="fa fa-pencil" aria-hidden="true"></i>
                   <span data-i18n="optionsAdvancedSettingsTitle"></span>
                 </div>
@@ -361,53 +320,20 @@
 
               <div class="card my-4 shadow">
                 <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-sm table-striped table-bordered">
-                      <caption data-i18n="optionsConnectedDatabasesText"></caption>
-                      <thead>
-                        <tr>
-                          <th scope="col"><span data-i18n="optionsDatabaseIdentifier"></span></th>
-                          <th scope="col"><span data-i18n="optionsDatabaseKey"></span></th>
-                          <th scope="col"><span data-i18n="optionsDatabaseLastUsed"></span></th>
-                          <th scope="col"><span data-i18n="optionsDatabaseCreated"></span></th>
-                          <th scope="col"><span data-i18n="optionsDatabaseDelete"></span></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="empty">
-                          <td colspan="5"><span data-i18n="optionsConnectedDatabasesNotFound"></span></td>
-                        </tr>
-                        <tr class="clone d-none">
-                          <td class="identifier text-nowrap"></td>
-                          <td class="key text-nowrap"></td>
-                          <td class="last-used text-nowrap"></td>
-                          <td class="created text-nowrap"></td>
-                          <td class="text-nowrap"><button class="btn btn-sm delete btn-danger"><i class="fa fa-remove" aria-hidden="true"></i><span data-i18n="optionsButtonRemove"></span></button></td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div class="form-group">
+                    <label for="sysPassURL" data-i18n="optionsConnectedDatabasesSysPassURL"></label>
+                    <input class="form-control form-control-sm col-lg-10" type="url" id="sysPassURL" aria-label="Manual URL" pattern="http://.*|https://.*" minlength="10" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="sysPassAPIKey" data-i18n="optionsConnectedDatabasesSysPassAPIKey"></label>
+                    <input class="form-control form-control-sm col-lg-10" type="text" id="sysPassAPIKey" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="sysPassAPIKeyPass" data-i18n="optionsConnectedDatabasesSysPassAPIKeyPass"></label>
+                    <input class="form-control form-control-sm col-lg-10" type="password" id="sysPassAPIKeyPass" required>
                   </div>
                   <div>
                     <button id="connect-button" class="btn btn-sm btn-success"><i class="fa fa-link" aria-hidden="true"></i><span data-i18n="optionsButtonConnect"></span></button>
-                  </div>
-
-                  <div id="dialogDeleteConnectedDatabase" class="modal fade" tabindex="-1" role="dialog">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" data-i18n="optionsDatabasesRemoveIdentifier"></h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        </div>
-                        <div class="modal-body">
-                          <p><span data-i18n="optionsDatabasesRemoveIdentifierConfirmFirst" i18n-placeholder="<strong></strong>"></span></p>
-                          <p class="help-block" data-i18n="optionsDatabasesRemoveIdentifierConfirmSecond"></p>
-                        </div>
-                        <div class="modal-footer">
-                          <button class="btn btn-sm btn-secondary" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove" aria-hidden="true"></i><span data-i18n="optionsButtonCancel"></span></button>
-                          <button class="btn btn-sm yes btn-success" autofocus><i class="fa fa-check" aria-hidden="true"></i><span data-i18n="optionsButtonRemoveNow"></span></button>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
