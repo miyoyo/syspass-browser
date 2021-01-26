@@ -2,8 +2,10 @@
 
 Browser extension for [sysPass](https://syspass.org/).
 
-Based on the [KeePassXC](https://keepassxc.org/) Team's [KeePassXC-Browser](https://github.com/keepassxreboot/keepassxc-browser) extension
-Based on [pfn](https://github.com/pfn)'s [chromeIPass](https://github.com/pfn/passifox).
+Based on the [KeePassXC](https://keepassxc.org/) Team's [KeePassXC-Browser](https://github.com/keepassxreboot/keepassxc-browser) extension.
+
+Itself based on [pfn](https://github.com/pfn)'s [chromeIPass](https://github.com/pfn/passifox).
+
 Some changes merged also from [smorks](https://github.com/smorks)' [KeePassHttp-Connector](https://github.com/smorks/keepasshttp-connector).
 
 ## Download and use
