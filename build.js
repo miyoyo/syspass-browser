@@ -34,14 +34,7 @@ function adjustManifest(manifest) {
     return `keepassxc-browser_${data['version']}_${browser}.zip`;
 }
 
-async function updateTranslations() {
-    console.log('Pulling translations from Transifex, please wait...');
-    const { stdout } = await exec('tx pull -af');
-    console.log(stdout);
-}
-
 (async() => {
-    await updateTranslations();
     fs.copyFileSync(`${DEST}/manifest.json`, `./${DEFAULT}`);
 
     for (const browser in BROWSERS) {
