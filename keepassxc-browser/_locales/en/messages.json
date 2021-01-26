@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "KeePassXC integration for modern web browsers",
+        "message": "sysPass integration for modern web browsers",
         "description": "Name of the extension."
     },
     "contextMenuFillUsernameAndPassword": {
@@ -324,7 +324,7 @@
         "description": "Button text for adding Username-only option."
     },
     "popupErrorEncountered": {
-        "message": "KeePassXC-Browser has encountered an error:",
+        "message": "sysPass-Browser has encountered an error:",
         "description": "A text shown above error message in the popup."
     },
     "popupUpdateAvailable": {
@@ -356,8 +356,8 @@
         "description": "A popup message shown when KeePassXC is not connected but configured."
     },
     "popupConfiguredAndAssociated": {
-        "message": "KeePassXC-Browser is connected to KeePassXC and has been configured using the following identifier: $1",
-        "description": "A popuo message when a connection to KeePassXC is succesful."
+        "message": "sysPass-Browser is connected to sysPass and has been configured using the following identifier: $1",
+        "description": "A popuo message when a connection to sysPass is succesful."
     },
     "popupUsernameFieldDetected": {
         "message": "Only a single username field was detected. Add the URL to Site Preferences with Username-only option enabled?",
@@ -480,7 +480,7 @@
         "description": "Dismiss button text when in HTTP Authentication popup."
     },
     "optionsTitle": {
-        "message": "Settings | KeePassXC-Browser",
+        "message": "Settings | sysPass-Browser",
         "description": "Options page title."
     },
     "optionsGeneralSettingsTab": {
@@ -838,6 +838,18 @@
     "optionsConnectedDatabasesNotFound": {
         "message": "No connected databases found.",
         "description": "Shown in the connected databases table when there is no connected databases."
+    },
+    "optionsConnectedDatabasesSysPassURL": {
+        "message": "sysPass URL",
+        "description": "Request the URL to the sysPass instance that will be interacted with."
+    },
+    "optionsConnectedDatabasesSysPassAPIKey": {
+        "message": "sysPass API Key",
+        "description": "Request the API Key to use to identify to the sysPass instance."
+    },
+    "optionsConnectedDatabasesSysPassAPIKeyPass": {
+        "message": "sysPass API Key Password",
+        "description": "Password to the API Key to use to interact with the sysPass instance."
     },
     "optionsDatabasesRemoveIdentifier": {
         "message": "Remove identifier from database list?",
