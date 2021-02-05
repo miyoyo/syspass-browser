@@ -189,8 +189,8 @@ kpxcForm.getFormSubmitButton = function(form) {
     }
 
     // Try to find another button. Select the last one.
-    // TODO: Possibly change this behavior to select the last one for only certain sites.
-    const buttons = Array.from(form.querySelectorAll(kpxcForm.formButtonQuery));
+    // If any formaction overriding the default action is set, ignore those buttons.
+    const buttons = Array.from(form.querySelectorAll(kpxcForm.formButtonQuery)).filter(b => !b.getAttribute('formAction'));
     if (buttons.length > 0) {
         return buttons[buttons.length - 1];
     }
@@ -941,7 +941,7 @@ kpxc.fillInCredentials = async function(combination, predefinedUsername, uuid, p
     }
 
     // Fill StringFields
-    if (selectedCredentials.stringFields.length > 0) {
+    if (selectedCredentials.stringFields && selectedCredentials.stringFields.length > 0) {
         kpxc.fillInStringFields(combination.fields, selectedCredentials.stringFields);
     }
 
@@ -1502,7 +1502,7 @@ kpxc.updateTOTPList = async function() {
         const password = kpxc.credentials[index].password;
 
         // If no username is set, compare with a password
-        const credentialList = kpxc.credentials.filter(c => (c.totp || c.stringFields.some(s => s['KPH: {TOTP}']))
+        const credentialList = kpxc.credentials.filter(c => (c.totp || (c.stringFields && c.stringFields.some(s => s['KPH: {TOTP}'])))
             && (c.login === username || (!username && c.password === password)));
 
         // Filter TOTP Autocomplete Menu with matching 2FA credentials
