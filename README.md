@@ -45,7 +45,6 @@ KeePassXC-Browser extension requests the following permissions:
 | `webRequestBlocking`      | For handling HTTP Basic Auth |
 | `http://*/*`              | To allow using KeePassXC-Browser on all websites |
 | `https://*/*`             | To allow using KeePassXC-Browser on all websites |
-| `https://api.github.com/` | For checking the latest KeePassXC version from GitHub |
 
 This last permission will be removed soon.
 

@@ -135,8 +135,7 @@
         "webRequest",
         "webRequestBlocking",
         "https://*/*",
-        "http://*/*",
-        "https://api.github.com/"
+        "http://*/*"
     ],
     "applications": {
        "gecko": {
