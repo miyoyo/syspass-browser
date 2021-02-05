@@ -46,8 +46,6 @@ KeePassXC-Browser extension requests the following permissions:
 | `http://*/*`              | To allow using KeePassXC-Browser on all websites |
 | `https://*/*`             | To allow using KeePassXC-Browser on all websites |
 
-This last permission will be removed soon.
-
 ## Translations
 
 This project is currently only available in English.
