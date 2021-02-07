@@ -164,7 +164,7 @@ keepass.testAssociation = async function (tab) {
         keepass.isKeePassXCAvailable = false;
 
         if(tab !== undefined)
-            page.tabs[tab.id].errorMessage = "Unable to contact sysPass, check configuration.";
+            page.tabs[tab.id].errorMessage = "Unable to contact sysPass, check configuration (Settings -> Connected Databases).";
         console.log(err)
         return false;
     }
