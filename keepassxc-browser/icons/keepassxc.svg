@@ -7,13 +7,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
+   width="150mm"
+   height="210.11674mm"
+   viewBox="0 0 150 210.11674"
    version="1.1"
    id="svg8"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)"
-   sodipodi:docname="logo_light.svg"
+   sodipodi:docname="keepassxc.svg"
    inkscape:export-filename="C:\Users\hidden\logo_dark.png"
    inkscape:export-xdpi="15.473302"
    inkscape:export-ydpi="15.473302">
@@ -21,10 +21,10 @@
      id="defs2">
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="45.924106 : 137.16071 : 1"
-       inkscape:vp_y="-1.8369094e-13 : 1000 : 0"
-       inkscape:vp_z="179.95089 : 127.9003 : 1"
-       inkscape:persp3d-origin="105 : 99 : 1"
+       inkscape:vp_x="45.924107 : 50.27745 : 1"
+       inkscape:vp_y="-1.8369094e-13 : 999.99995 : 0"
+       inkscape:vp_z="179.95089 : 41.01704 : 1"
+       inkscape:persp3d-origin="105 : 12.116742 : 1"
        id="perspective33" />
   </defs>
   <sodipodi:namedview
@@ -36,7 +36,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.70710678"
      inkscape:cx="148.2062"
-     inkscape:cy="490.67287"
+     inkscape:cy="491.11413"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -47,7 +47,11 @@
      inkscape:window-height="1027"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -63,11 +67,13 @@
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="Layer 2" />
+     inkscape:label="Layer 2"
+     transform="translate(0,0.1167498)" />
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,0.1167498)">
     <path
        id="path146"
        style="fill:none;stroke:#5c6bc0;stroke-width:20;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
