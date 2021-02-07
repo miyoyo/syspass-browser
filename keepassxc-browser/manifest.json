@@ -94,13 +94,6 @@
                 "mac": "MacCtrl+Shift+I"
             }
         },
-        "fill_totp": {
-            "description": "__MSG_contextMenuFillTOTP__",
-            "suggested_key": {
-                "default": "Alt+Shift+O",
-                "mac": "MacCtrl+Shift+O"
-            }
-        },
         "show_password_generator": {
             "description": "__MSG_contextMenuShowPasswordGenerator__",
             "suggested_key": {
