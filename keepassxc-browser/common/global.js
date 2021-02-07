@@ -20,7 +20,7 @@ const showNotification = function(message) {
     browser.notifications.create({
         'type': 'basic',
         'iconUrl': browser.extension.getURL('icons/keepassxc_64x64.png'),
-        'title': 'KeePassXC-Browser',
+        'title': 'sysPass-Browser',
         'message': message
     });
 };
