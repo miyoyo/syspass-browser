@@ -356,7 +356,7 @@
         "description": "A popup message shown when sysPass is not connected but configured."
     },
     "popupConfiguredAndAssociated": {
-        "message": "sysPass-Browser is connected to sysPass and has been configured using the following identifier: $1",
+        "message": "sysPass-Browser is connected to sysPass at: $1",
         "description": "A popuo message when a connection to sysPass is succesful."
     },
     "popupUsernameFieldDetected": {
