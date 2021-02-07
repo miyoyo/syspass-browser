@@ -1068,7 +1068,7 @@
         "description": "Advanced settings title in settings page"
     },
     "optionsExtensionTitle": {
-        "message": "Extension",
+        "message": "Original Extension",
         "description": "Extension title in settings page"
     },
     "openNewTab": {
