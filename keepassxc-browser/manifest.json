@@ -120,7 +120,6 @@
         "activeTab",
         "contextMenus",
         "clipboardWrite",
-        "nativeMessaging",
         "notifications",
         "storage",
         "tabs",
