@@ -840,7 +840,7 @@
         "description": "Shown in the connected databases table when there is no connected databases."
     },
     "optionsConnectedDatabasesSysPassURL": {
-        "message": "sysPass URL",
+        "message": "sysPass URL (Must contain protocol, and end with api.php, such as https://syspass.lan/api.php)",
         "description": "Request the URL to the sysPass instance that will be interacted with."
     },
     "optionsConnectedDatabasesSysPassAPIKey": {
