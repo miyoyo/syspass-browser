@@ -83,14 +83,6 @@
 
                   <div class="form-group">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="showOTPIcon" id="totpIconsCheckBox" value="true" />
-                      <label class="form-check-label" for="totpIconsCheckBox"  data-i18n="optionsCheckboxOTPIcons"></label>
-                      <span class="form-text text-muted" data-i18n="optionsShowOTPIconHelpText"></span>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <div class="form-check">
                       <input class="form-check-input" type="checkbox" name="showNotifications" id="notificationCheckBox" value="true" />
                       <label class="form-check-label" for="notificationCheckBox" data-i18n="optionsCheckboxShowNotifications"></label>
                       <span class="form-text text-muted" data-i18n="optionsShowNotificationsHelpText"></span>
@@ -108,7 +100,6 @@
                   <p>
                     <span data-i18n="contextMenuFillUsernameAndPassword"></span>: <span id="fill_username_password-shortcut">error</span><br />
                     <span data-i18n="contextMenuFillPassword"></span>: <span id="fill_password-shortcut">error</span><br />
-                    <span data-i18n="contextMenuFillTOTP"></span>: <span id="fill_totp-shortcut">error</span><br />
                     <span data-i18n="contextMenuShowPasswordGenerator"></span>: <span id="show_password_generator-shortcut">error</span>
                   </p>
                   <p id="chrome-only">
@@ -173,7 +164,7 @@
                 </div>
               </div>
 
-              <div class="card my-4 shadow">
+<!--              <div class="card my-4 shadow">
                 <div class="card-header h6 rounded-0">
                   <i class="fa fa-save" aria-hidden="true"></i>
                   <span data-i18n="optionsSavingCredentialsTitle"></span>
@@ -220,7 +211,7 @@
                   </div>
                   <span class="form-text text-muted" data-i18n="optionsRedirectAllowanceHelpText"></span>
                 </div>
-              </div>
+              </div>-->
 
               <div class="card my-4 shadow">
                 <div class="card-header h6 rounded-0">
@@ -233,30 +224,6 @@
                       <input class="form-check-input" type="checkbox" name="useObserver" id="useObserver" value="true" />
                       <label class="form-check-label" for="useObserver" data-i18n="optionsUseObserver"></label>
                       <span class="form-text text-muted" data-i18n="optionsUseObserverHelpText"></span>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="showGroupNameInAutocomplete" id="showGroupNameInAutocomplete" value="true" />
-                      <label class="form-check-label" for="showGroupNameInAutocomplete" data-i18n="optionsCheckboxShowGroupNameInAutocomplete"></label>
-                      <span class="form-text text-muted" data-i18n="optionsShowGroupNameInAutocompleteHelpText"></span>
-                      <div class="alert alert-info mt-3 col-lg-9" role="alert" id="versionRequiredAlert">
-                        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                        <span data-i18n="optionsKeePassXCVersionRequired" i18n-placeholder="2.6.0"></span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="autoReconnect" id="autoReconnect" value="true" />
-                      <label class="form-check-label" for="autoReconnect" data-i18n="optionsCheckboxAutomaticReconnect"></label>
-                      <span class="form-text text-muted" data-i18n="optionsAutomaticReconnectHelpText"></span>
-                      <div class="alert alert-warning mt-3 col-lg-9" role="alert">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                        <span data-i18n="optionsAutomaticReconnectWarning"></span>
-                      </div>
                     </div>
                   </div>
 
