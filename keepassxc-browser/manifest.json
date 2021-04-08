@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "sysPass-Browser",
-    "version": "1.7.6",
-    "version_name": "1.7.6",
+    "version": "1.7.8",
+    "version_name": "1.7.8",
     "description": "__MSG_extensionDescription__",
     "author": "KeePassXC Team, Miyoyo",
     "icons": {
@@ -100,6 +100,18 @@
                 "default": "Alt+Shift+G",
                 "mac": "MacCtrl+Shift+G"
             }
+        },
+        "save_credentials": {
+            "description": "__MSG_contextMenuSaveCredentials__"
+        },
+        "redetect_fields": {
+            "description": "__MSG_popupRedetectButton__"
+        },
+        "choose_credential_fields": {
+            "description": "__MSG_popupChooseCredentialsText__"
+        },
+        "retrive_credentials_forced": {
+            "description": "__MSG_popupReopenButton__"
         }
     },
     "web_accessible_resources": [

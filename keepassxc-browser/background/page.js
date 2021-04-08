@@ -9,7 +9,9 @@ const defaultSettings = {
     autoRetrieveCredentials: true,
     autoSubmit: false,
     checkUpdateKeePassXC: 3,
+    clearCredentialsTimeout: 10,
     colorTheme: 'system',
+    credentialSorting: SORT_BY_GROUP_AND_TITLE,
     defaultGroup: '',
     defaultGroupAlwaysAsk: false,
     redirectAllowance: 1,
@@ -26,6 +28,7 @@ const defaultSettings = {
 var page = {};
 page.attributeMenuItemIds = [];
 page.blockedTabs = [];
+page.clearCredentialsTimeout = null;
 page.currentRequest = {};
 page.currentTabId = -1;
 page.loginId = -1;
@@ -80,6 +83,14 @@ page.initSettings = async function() {
 
         if (!('colorTheme' in page.settings)) {
             page.settings.colorTheme = defaultSettings.colorTheme;
+        }
+
+        if (!('clearCredentialsTimeout' in page.settings)) {
+            page.settings.clearCredentialsTimeout = defaultSettings.clearCredentialsTimeout;
+        }
+
+        if (!('credentialSorting' in page.settings)) {
+            page.settings.credentialSorting = defaultSettings.credentialSorting;
         }
 
         if (!('defaultGroup' in page.settings)) {
@@ -172,12 +183,18 @@ page.initSitePreferences = async function() {
 };
 
 page.switchTab = async function(tab) {
+    // Clears Fill Attribute selection from context menu
     browser.contextMenus.update('fill_attribute', { visible: false });
-    if (page.tabs[tab.id]
-        && page.tabs[tab.id].credentials.length > 0
-        && page.tabs[tab.id].credentials.some(e => e.stringFields && e.stringFields.length > 0)) {
-        await page.updateContextMenu(tab, page.tabs[tab.id].credentials);
-    }
+
+    // Clears all logins from other tabs after a timeout
+    clearTimeout(page.clearCredentialsTimeout);
+    page.clearCredentialsTimeout = setTimeout(() => {
+        for (const pageTabId of Object.keys(page.tabs)) {
+            if (tab.id !== Number(pageTabId)) {
+                page.clearCredentials(Number(pageTabId), true);
+            }
+        }
+    }, page.settings.clearCredentialsTimeout * 1000);
 
     browserAction.showDefault(tab);
     browser.tabs.sendMessage(tab.id, { action: 'activated_tab' }).catch((e) => {
@@ -268,14 +285,15 @@ page.removePageInformationFromNotExistingTabs = async function() {
 
 // Retrieves the credentials. Returns cached values when found.
 // Page reload or tab switch clears the cache.
+// If the retrieval is forced (from Credential Banner), get new credentials normally.
 page.retrieveCredentials = async function(tab, args = []) {
-    const [ url, submitUrl ] = args;
-    if (page.tabs[tab.id] && page.tabs[tab.id].credentials.length > 0) {
+    const [ url, submitUrl, force ] = args;
+    if (page.tabs[tab.id] && page.tabs[tab.id].credentials.length > 0 && !force) {
         return page.tabs[tab.id].credentials;
     }
 
     // Ignore duplicate requests
-    if (page.currentRequest.url === url && page.currentRequest.submitUrl === submitUrl) {
+    if (page.currentRequest.url === url && page.currentRequest.submitUrl === submitUrl && !force) {
         return [];
     } else {
         page.currentRequest.url = url;

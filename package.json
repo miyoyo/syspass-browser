@@ -1,6 +1,6 @@
 {
   "name": "sysPass-Browser",
-  "version": "1.7.6",
+  "version": "1.7.8",
   "description": "sysPass-Browser",
   "main": "build.js",
   "devDependencies": {

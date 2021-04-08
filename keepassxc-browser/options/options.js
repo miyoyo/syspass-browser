@@ -73,10 +73,15 @@ options.initGeneralSettings = function() {
         $('#tab-general-settings select#colorTheme').val(options.settings['colorTheme']);
     }
 
-    $('#tab-general-settings select:first').change(async function() {
+    $('#tab-general-settings select#colorTheme').change(async function() {
         options.settings['colorTheme'] = $(this).val();
         await options.saveSettings();
         location.reload();
+    });
+
+    $('#tab-general-settings select#credentialSorting').change(async function() {
+        options.settings['credentialSorting'] = $(this).val();
+        await options.saveSettings();
     });
 
     $('#tab-general-settings input[type=checkbox]').each(function() {
@@ -115,7 +120,18 @@ options.initGeneralSettings = function() {
         }
     });
 
+    $('#tab-general-settings select#credentialSorting').val(options.settings['credentialSorting']);
     $('#tab-general-settings input#defaultGroup').val(options.settings['defaultGroup']);
+
+    $('#tab-general-settings input#clearCredentialTimeout').val(options.settings['clearCredentialsTimeout']);
+    $('#tab-general-settings input#clearCredentialTimeout').change(async function(e) {
+        if (e.target.valueAsNumber < 0 || e.target.valueAsNumber > 3600) {
+            return;
+        }
+
+        options.settings['clearCredentialsTimeout'] = e.target.valueAsNumber;
+        await options.saveSettings();
+    });
 
     $('#tab-general-settings input[type=radio]').each(function() {
         if ($(this).val() === String(options.settings[$(this).attr('name')])) {
@@ -257,7 +273,7 @@ options.initGeneralSettings = function() {
     }
 };
 
-options.showKeePassXCVersions = function(response) {
+options.showKeePassXCVersions = async function(response) {
     if (response.current === '') {
         response.current = 'unknown';
     }
@@ -270,7 +286,12 @@ options.showKeePassXCVersions = function(response) {
     $('#tab-about span.kpxcVersion').text(response.current);
     $('#tab-general-settings button.checkUpdateKeePassXC:first').attr('disabled', false);
 
-    if (response.current.startsWith('2.6') || response.current === '2.5.3-snapshot') {
+    const result = await browser.runtime.sendMessage({
+        action: 'compare_version',
+        args: [ '2.6.0', response.current ]
+    });
+
+    if (result) {
         $('#tab-general-settings #versionRequiredAlert').hide();
     } else {
         $('#tab-general-settings #showGroupNameInAutocomplete').attr('disabled', true);
@@ -523,14 +544,14 @@ options.initSitePreferences = function() {
             trClone.removeClass('clone d-none');
 
             const tr = trClone.clone(true);
-            tr.data('url', value);
+            tr.data('url', value.toLowerCase());
             tr.attr('id', 'tr-scf' + newValue);
             tr.children('td:first').text(value);
             tr.children('td:nth-child(2)').children('select').val(IGNORE_NOTHING);
             $('#tab-site-preferences table tbody:first').append(tr);
             $('#tab-site-preferences table tbody:first tr.empty:first').hide();
 
-            options.settings['sitePreferences'].push({ url: value, ignore: IGNORE_NOTHING, usernameOnly: false });
+            options.settings['sitePreferences'].push({ url: value.toLowerCase(), ignore: IGNORE_NOTHING, usernameOnly: false });
             options.saveSettings();
             manualUrl.value = '';
         }

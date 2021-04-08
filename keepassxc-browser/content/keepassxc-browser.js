@@ -6,7 +6,6 @@ const _maximumMutations = 200;
 // Contains already called method names
 const _called = {};
 _called.automaticRedetectCompleted = false;
-_called.clearLogins = false;
 _called.retrieveCredentials = false;
 
 // Wrapper
@@ -51,7 +50,7 @@ kpxcIcons.addIcon = async function(field, iconType) {
 // Adds all necessary icons to a saved form
 kpxcIcons.addIconsFromForm = async function(form) {
     const addUsernameIcons = async function(c) {
-        if (kpxc.settings.showLoginFormIcon && await kpxc.passwordFilled() === false) {
+        if (kpxc.settings.showLoginFormIcon && await kpxc.passwordFilledWithExceptions(c) === false) {
             // Special case where everything else has been hidden, but a single password field is now displayed.
             // For example PayPal and Amazon is handled like this.
             if (c.username && !c.password && c.passwordInputs.length === 1) {
@@ -317,6 +316,7 @@ kpxcForm.saveForm = function(form, combination) {
         username: combination.username,
         password: combination.password,
         totp: combination.totp,
+        totpInputs: Array.from(form.elements).filter(e => e.nodeName === 'INPUT' && kpxcTOTPIcons.isValid(e)),
         passwordInputs: Array.from(form.elements).filter(e => e.nodeName === 'INPUT' && e.type === 'password')
     });
 };
@@ -376,6 +376,48 @@ kpxcFields.getAllCombinations = async function(inputs) {
         combinations.push(combination);
     }
 
+    // Check for multiple segmented TOTP fields
+    if (combinations.length === 0) {
+        kpxcFields.getSegmentedTOTPFields(inputs, combinations);
+    }
+
+    return combinations;
+};
+
+// Adds segmented TOTP fields to the combination if found
+kpxcFields.getSegmentedTOTPFields = function(inputs, combinations) {
+    const addTotpFieldsToCombination = function(inputFields) {
+        const totpInputs = Array.from(inputFields).filter(e => e.nodeName === 'INPUT' && e.type !== 'password');
+        if (totpInputs.length === 6) {
+            const combination = {
+                form: form,
+                totpInputs: totpInputs
+            };
+
+            combinations.push(combination);
+
+            // Create an icon to the right side of the segmented fields
+            kpxcTOTPIcons.newIcon(totpInputs[totpInputs.length - 1], kpxc.databaseState, true);
+            kpxcIcons.icons.push({
+                field: totpInputs[totpInputs.length - 1],
+                iconType: kpxcIcons.iconTypes.TOTP,
+                segmented: true
+            });
+        }
+    };
+
+    const form = inputs.length > 0 ? inputs[0].form : undefined;
+    if (form && (acceptedOTPFields.some(f => (form.className && form.className.includes(f))
+        || (form.id && typeof(form.id) === 'string' && form.id.includes(f))
+        || (form.name && typeof(form.name) === 'string' && form.name.includes(f))
+        || form.length === 6))) {
+        // Use the form's elements
+        addTotpFieldsToCombination(form.elements);
+    } else if (inputs.length === 6 && inputs.every(i => i.inputMode === 'numeric' && i.pattern.includes('0-9'))) {
+        // No form is found, but input fields are possibly segmented TOTP fields
+        addTotpFieldsToCombination(inputs);
+    }
+
     return combinations;
 };
 
@@ -420,8 +462,8 @@ kpxcFields.getCombination = async function(field, givenType) {
     for (const combination of kpxc.combinations) {
         if (!givenType && Object.values(combination).find(c => c === field)) {
             return combination;
-        } else if (givenType) {
-            if (combination[givenType] === field) {
+        } else if (givenType && combination[givenType]) {
+            if (combination[givenType] === field || combination[givenType].includes(field)) {
                 return combination;
             }
         }
@@ -430,8 +472,75 @@ kpxcFields.getCombination = async function(field, givenType) {
     return undefined;
 };
 
-// Gets of generates an unique ID for the element
-kpxcFields.getId = function(target) {
+// Sets and returns unique ID's for the element
+kpxcFields.setId = function(target) {
+    return [ kpxcFields.getIdFromXPath(target), kpxcFields.getIdFromProperties(target) ];
+};
+
+// Returns generated unique ID's for the element. If XPath ID fails, return the fallback one.
+kpxcFields.getId = function(idArray, inputField) {
+    if (!idArray) {
+        return '';
+    }
+
+    // Legacy ID is used. Convert it to the new one if possible
+    if (!Array.isArray(idArray) && idArray.length > 0) {
+        if (idArray === kpxcFields.getLegacyId(inputField)) {
+            idArray = kpxcFields.setId(inputField);
+        }
+    }
+
+    const elementFromXPath = kpxcFields.getElementFromXPathId(idArray[0]);
+    const fallbackId = kpxcFields.getIdFromProperties(inputField);
+
+    return elementFromXPath || (fallbackId === idArray[1] ? inputField : '');
+};
+
+// Returns element XPath
+kpxcFields.getIdFromXPath = function(target) {
+    let xpath = '';
+    let pos;
+    let temp;
+
+    while (target !== document.documentElement) {
+        pos = 0;
+        temp = target;
+        while (temp) {
+            if (temp.nodeType === 1 && temp.nodeName === target.nodeName) {
+                pos += 1;
+            }
+
+            temp = temp.previousSibling;
+        }
+
+        xpath = `${target.nodeName.toLowerCase()}${(pos > 1 ? `[${pos}]/` : '/')}${xpath}`;
+        target = target.parentNode;
+    }
+
+    xpath = `/${document.documentElement.nodeName.toLowerCase()}/${xpath}`;
+    xpath = xpath.replace(/\/$/, '');
+    return xpath;
+};
+
+// Generate uniqe ID from properties (new method)
+kpxcFields.getIdFromProperties = function(target) {
+    if (target.name) {
+        return `${target.nodeName} ${target.type} ${target.name} ${target.placeholder}`;
+    }
+
+    if (target.classList && target.classList.length > 0) {
+        return `${target.nodeName} ${target.type} ${target.classList.value} ${target.placeholder}`;
+    }
+
+    if (target.id && target.id !== '') {
+        return `${target.nodeName} ${target.type} ${kpxcFields.prepareId(target.id)} ${target.placeholder}`;
+    }
+
+    return `kpxc ${target.type} ${target.clientTop}${target.clientLeft}${target.clientWidth}${target.clientHeight}${target.offsetTop}${target.offsetLeft}`;
+};
+
+// Legacy unique ID generation for converting
+kpxcFields.getLegacyId = function(target) {
     if (target.classList.length > 0) {
         return `${target.nodeName} ${target.type} ${target.classList.value} ${target.name} ${target.placeholder}`;
     }
@@ -441,6 +550,10 @@ kpxcFields.getId = function(target) {
     }
 
     return `kpxc ${target.type} ${target.clientTop}${target.clientLeft}${target.clientWidth}${target.clientHeight}${target.offsetTop}${target.offsetLeft}`;
+};
+
+kpxcFields.getElementFromXPathId = function(xpath) {
+    return (new XPathEvaluator()).evaluate(xpath, document.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 };
 
 // Check for new password via autocomplete attribute
@@ -556,9 +669,9 @@ kpxcFields.useCustomLoginFields = async function() {
     }
 
     // Finds the input field based on the stored ID
-    const findInputField = async function(inputFields, id) {
-        if (id) {
-            const input = inputFields.find(e => kpxcFields.getId(e) === id);
+    const findInputField = async function(inputFields, idArray) {
+        if (idArray) {
+            const input = inputFields.find(e => e === kpxcFields.getId(idArray, e));
             if (input) {
                 return input;
             }
@@ -593,7 +706,13 @@ kpxcFields.useCustomLoginFields = async function() {
     // Handle custom TOTP field
     if (totp) {
         totp.setAttribute('kpxc-defined', 'totp');
-        kpxcTOTPIcons.newIcon(totp, kpxc.databaseState, true);
+        kpxcTOTPIcons.newIcon(totp, kpxc.databaseState);
+    }
+
+    // If not all expected fields are identified, return an empty combination
+    if ((creds.username && !username) || (creds.password && !password) || (creds.totp && !totp)
+        || (creds.fields.length !== stringFields.length)) {
+        return [];
     }
 
     const combinations = [];
@@ -644,7 +763,7 @@ kpxc.url = null;
 // Add page to Site Preferences with Username-only detection enabled. Set from the popup
 kpxc.addToSitePreferences = async function() {
     // Returns a predefined URL for certain sites
-    let site = trimURL(window.top.location.href);
+    let site = trimURL(window.top.location.href).toLowerCase();
 
     // Check if the site already exists -> update the current settings
     let siteExists = false;
@@ -824,7 +943,13 @@ kpxc.fillFromPopup = async function(id, uuid) {
     }
 
     await sendMessage('page_set_login_id', id);
-    kpxc.fillInCredentials(kpxc.combinations[0], kpxc.credentials[id].login, uuid);
+    const selectedCredentials = kpxc.credentials.find(c => c.uuid === uuid);
+    if (!selectedCredentials) {
+        console.log('Error: Uuid not found: ', uuid);
+        return;
+    }
+
+    kpxc.fillInCredentials(kpxc.combinations[0], selectedCredentials.login, uuid);
     kpxcUserAutocomplete.closeList();
 };
 
@@ -833,12 +958,12 @@ kpxc.fillFromTOTP = async function(target) {
     const el = target || document.activeElement;
     const credentialList = await kpxc.updateTOTPList();
 
-    if (credentialList.length === 0) {
+    if (credentialList && credentialList.length === 0) {
         kpxcUI.createNotification('warning', tr('credentialsNoTOTPFound'));
         return;
     }
 
-    if (credentialList.length === 1) {
+    if (credentialList && credentialList.length === 1) {
         kpxc.fillTOTPFromUuid(el, credentialList[0].uuid);
         return;
     }
@@ -865,15 +990,42 @@ kpxc.fillTOTPFromUuid = async function(el, uuid) {
             return;
         }
 
-        kpxc.setValue(el, totp);
+        kpxc.setTOTPValue(el, totp);
     } else if (user.stringFields && user.stringFields.length > 0) {
         const stringFields = user.stringFields;
         for (const s of stringFields) {
             const val = s['KPH: {TOTP}'];
             if (val) {
-                kpxc.setValue(el, val);
+                kpxc.setTOTPValue(el, val);
             }
         }
+    }
+};
+
+// Set normal or segmented TOTP value
+kpxc.setTOTPValue = function(elem, val) {
+    if (kpxc.combinations.length === 0) {
+        return;
+    }
+
+    for (const comb of kpxc.combinations) {
+        if (comb.totpInputs && comb.totpInputs.length === 6) {
+            kpxc.fillSegmentedTotp(elem, val, comb.totpInputs);
+            return;
+        }
+    }
+
+    kpxc.setValue(elem, val);
+};
+
+// Fill TOTP in parts
+kpxc.fillSegmentedTotp = function(elem, val, totpInputs) {
+    if (!totpInputs.includes(elem)) {
+        return;
+    }
+
+    for (let i = 0; i < 6; ++i) {
+        kpxc.setValue(totpInputs[i], val[i]);
     }
 };
 
@@ -918,6 +1070,7 @@ kpxc.fillInCredentials = async function(combination, predefinedUsername, uuid, p
     // Find the correct credentials
     const selectedCredentials = kpxc.credentials.find(c => c.uuid === uuid);
     if (!selectedCredentials) {
+        console.log('Error: Uuid not found: ', uuid);
         return;
     }
 
@@ -952,7 +1105,8 @@ kpxc.fillInCredentials = async function(combination, predefinedUsername, uuid, p
     await sendMessage('page_set_manual_fill', ManualFill.NONE);
 
     // Auto-submit
-    if (kpxc.settings.autoSubmit && !skipAutoSubmit) {
+    const autoSubmitIgnoredForSite = await kpxc.siteIgnored(IGNORE_AUTOSUBMIT);
+    if (kpxc.settings.autoSubmit && !skipAutoSubmit && !autoSubmitIgnoredForSite) {
         const submitButton = kpxcForm.getFormSubmitButton(combination.form);
         if (submitButton !== undefined) {
             submitButton.click();
@@ -1112,10 +1266,15 @@ kpxc.initCombinations = async function(inputs = []) {
         return [];
     }
 
-    const combinations = kpxcFields.isCustomLoginFieldsUsed()
+    const isCustomLoginFieldsUsed = kpxcFields.isCustomLoginFieldsUsed();
+    const combinations = isCustomLoginFieldsUsed
                        ? await kpxcFields.useCustomLoginFields()
                        : await kpxcFields.getAllCombinations(inputs);
     if (!combinations || combinations.length === 0) {
+        if (isCustomLoginFieldsUsed) {
+            kpxcUI.createNotification('warning', tr('optionsCustomFieldsNotFound'));
+        }
+
         return [];
     }
 
@@ -1138,9 +1297,6 @@ kpxc.initCombinations = async function(inputs = []) {
 
 // The main function for finding input fields
 kpxc.initCredentialFields = async function() {
-    await sendMessage('page_clear_logins', _called.clearLogins);
-    _called.clearLogins = true;
-
     // Identify all forms in the page
     const formInputs = await kpxc.identifyFormInputs();
 
@@ -1178,25 +1334,46 @@ kpxc.initCredentialFields = async function() {
     }
 };
 
-// Intializes the login popup list for choosing credentials
+// Intializes the login lists for popup and Autocomplete Menu
 kpxc.initLoginPopup = function() {
     if (kpxc.credentials.length === 0) {
         return;
     }
 
-    const getLoginText = function(credential, withGroup) {
-        const name = credential.name.length < MAX_AUTOCOMPLETE_NAME_LEN
+    // Returns a login item with additional information for sorting
+    const getLoginItem = function(credential, withGroup, loginId) {
+        const title = credential.name.length < MAX_AUTOCOMPLETE_NAME_LEN
                    ? credential.name
                    : credential.name.substr(0, MAX_AUTOCOMPLETE_NAME_LEN) + '…';
         const group = (withGroup && credential.group) ? `[${credential.group}] ` : '';
         const visibleLogin = (credential.login.length > 0) ? credential.login : tr('credentialsNoUsername');
-        const text = `${group}${name} (${visibleLogin})`;
+        let text = `${group}${title} (${visibleLogin})`;
 
         if (credential.expired && credential.expired === 'true') {
-            return `${text} [${tr('credentialExpired')}]`;
+            text = `${text} [${tr('credentialExpired')}]`;
         }
 
-        return text;
+        return {
+            title: title,
+            group: group,
+            visibleLogin: visibleLogin,
+            login: credential.login,
+            loginId: loginId,
+            uuid: credential.uuid,
+            text: text
+        };
+    };
+
+    // Sorting with or without group name included
+    const sortLoginItemBy = function(a, b, name, withGroup = false) {
+        const firstGroup = a.group.toLowerCase();
+        const secondGroup = b.group.toLowerCase();
+        const first = a[name].toLowerCase();
+        const second = b[name].toLowerCase();
+
+        return withGroup
+            ? firstGroup.localeCompare(secondGroup) || first.localeCompare(second)
+            : first.localeCompare(second);
     };
 
     const getUniqueGroupCount = function(creds) {
@@ -1205,28 +1382,61 @@ kpxc.initLoginPopup = function() {
         return uniqueGroups.size;
     };
 
-    // Add usernames + descriptions to autocomplete-list and popup-list
-    const usernames = [];
-    kpxcUserAutocomplete.clear();
     const showGroupNameInAutocomplete = kpxc.settings.showGroupNameInAutocomplete && (getUniqueGroupCount(kpxc.credentials) > 1);
 
+    // Initialize login items
+    const loginItems = [];
     for (let i = 0; i < kpxc.credentials.length; i++) {
-        const loginText = getLoginText(kpxc.credentials[i], showGroupNameInAutocomplete);
-        usernames.push({ text: loginText, uuid: kpxc.credentials[i].uuid });
+        const loginItem = getLoginItem(kpxc.credentials[i], showGroupNameInAutocomplete, i);
+        loginItems.push(loginItem);
+    }
+
+    // Sort login items
+    if (kpxc.settings.credentialSorting === SORT_BY_TITLE) {
+        loginItems.sort((a, b) => sortLoginItemBy(a, b, 'title'));
+    } else if (kpxc.settings.credentialSorting === SORT_BY_USERNAME) {
+        loginItems.sort((a, b) => sortLoginItemBy(a, b, 'visibleLogin'));
+    } else if (kpxc.settings.credentialSorting === SORT_BY_GROUP_AND_TITLE) {
+        loginItems.sort((a, b) => sortLoginItemBy(a, b, 'title', true));
+    } else if (kpxc.settings.credentialSorting === SORT_BY_GROUP_AND_USERNAME) {
+        loginItems.sort((a, b) => sortLoginItemBy(a, b, 'visibleLogin', true));
+    }
+
+    const popupLoginItems = [];
+    kpxcUserAutocomplete.clear();
+
+    // Initialize Popup Login and Autocomplete Menu items
+    for (const l of loginItems) {
+        popupLoginItems.push({ text: l.text, uuid: l.uuid });
 
         kpxcUserAutocomplete.elements.push({
-            label: loginText,
-            value: kpxc.credentials[i].login,
-            uuid: kpxc.credentials[i].uuid,
-            loginId: i
+            label: l.text,
+            value: l.login,
+            uuid: l.uuid,
+            loginId: l.loginId
         });
     }
 
-    // Generate popup-list of usernames + descriptions
-    sendMessage('popup_login', usernames);
+    // Activate Popup Login list of usernames + descriptions
+    sendMessage('popup_login', popupLoginItems);
 };
 
 kpxc.passwordFilled = async function() {
+    return await sendMessage('password_get_filled');
+};
+
+/**
+ * Handle passwordFilled() with possible exceptions, e.g. Protonmail's mailbox password
+ * where we actually need two passwords for a successful login.
+ * If an exception is found, act like password is not yet filled.
+ * @param {Object} currentForm  Current saved form. @see kpxcForm.saveForm
+ * @returns {boolean}           True if password has been already filled
+ */
+kpxc.passwordFilledWithExceptions = async function(currentForm) {
+    if (currentForm.password && kpxcSites.exceptionFound(currentForm.password.id)) {
+        return false;
+    }
+
     return await sendMessage('password_get_filled');
 };
 
@@ -1251,8 +1461,9 @@ kpxc.prepareCredentials = async function() {
  * @param {string} passwordValue    Submitted password
  * @param {string} urlValue         URL of the page where password change was detected
  * @param {Array} oldCredentials    Credentials saved from the password change page, if available
+ * @param {boolean} useBanner       If banner is disabled, save directly
  */
-kpxc.rememberCredentials = async function(usernameValue, passwordValue, urlValue, oldCredentials) {
+kpxc.rememberCredentials = async function(usernameValue, passwordValue, urlValue, oldCredentials, useBanner = true) {
     const credentials = (oldCredentials !== undefined && oldCredentials.length > 0) ? oldCredentials : kpxc.credentials;
     if (passwordValue === '') {
         return undefined;
@@ -1302,14 +1513,20 @@ kpxc.rememberCredentials = async function(usernameValue, passwordValue, urlValue
         }
     }
 
-    // Show the Credential Banner
-    kpxcBanner.create({
+    const saveCredentials = {
         username: usernameValue,
         password: passwordValue,
         url: urlValue,
         usernameExists: usernameExists,
         list: credentialsList
-    });
+    };
+
+    if (useBanner) {
+        kpxcBanner.create(saveCredentials);
+    } else {
+        kpxcBanner.credentials = saveCredentials;
+        kpxcBanner.saveNewCredentials(saveCredentials);
+    }
 
     return true;
 };
@@ -1326,7 +1543,7 @@ kpxc.rememberCredentialsFromContextMenu = async function() {
     const usernameValue = combination.username ? combination.username.value : '';
     const passwordValue = combination.password ? combination.password.value : '';
 
-    const result = await kpxc.rememberCredentials(usernameValue, passwordValue);
+    const result = await kpxc.rememberCredentials(usernameValue, passwordValue, undefined, undefined, kpxc.settings.showLoginNotifications);
     if (result === undefined) {
         kpxcUI.createNotification('error', tr('rememberNoPassword'));
         return;
@@ -1337,13 +1554,14 @@ kpxc.rememberCredentialsFromContextMenu = async function() {
     }
 };
 
-// The basic function for retrieving credentials from KeePassXC
-kpxc.retrieveCredentials = async function() {
+// The basic function for retrieving credentials from KeePassXC.
+// Credential Banner can force the retrieval for reloading new/modified credentials.
+kpxc.retrieveCredentials = async function(force = false) {
     kpxc.url = document.location.href;
     kpxc.submitUrl = kpxc.getFormActionUrl(kpxc.combinations[0]);
 
     if (kpxc.settings.autoRetrieveCredentials && kpxc.url && kpxc.submitUrl) {
-        await kpxc.retrieveCredentialsCallback(await sendMessage('retrieve_credentials', [ kpxc.url, kpxc.submitUrl ]));
+        await kpxc.retrieveCredentialsCallback(await sendMessage('retrieve_credentials', [ kpxc.url, kpxc.submitUrl, force ]));
     }
 };
 
@@ -1429,11 +1647,11 @@ kpxc.siteIgnored = async function(condition) {
     if (kpxc.settings.sitePreferences) {
         let currentLocation;
         try {
-            currentLocation = window.top.location.href;
+            currentLocation = window.top.location.href.toLowerCase();
         } catch (err) {
             // Cross-domain security error inspecting window.top.location.href.
             // This catches an error when an iframe is being accessed from another (sub)domain -> use the iframe URL instead.
-            currentLocation = window.self.location.href;
+            currentLocation = window.self.location.href.toLowerCase();
         }
 
         const currentSetting = condition || IGNORE_FULL;
@@ -1876,8 +2094,10 @@ browser.runtime.onMessage.addListener(async function(req, sender) {
             kpxc.inputs = [];
             kpxc.combinations = [];
             kpxc.initCredentialFields();
-        } else if (req.action === 'remember_credentials') {
+        } else if (req.action === 'save_credentials') {
             kpxc.rememberCredentialsFromContextMenu();
+        } else if (req.action === 'retrive_credentials_forced') {
+            await kpxc.retrieveCredentials(true);
         } else if (req.action === 'show_password_generator') {
             kpxcPasswordDialog.trigger();
         }

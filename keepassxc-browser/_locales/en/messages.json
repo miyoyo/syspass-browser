@@ -28,8 +28,8 @@
         "description": "Show password generator text."
     },
     "contextMenuFillAttribute": {
-      "message": "Fill attribute…",
-      "description": "Context menu parent item for filling a custom attribute."
+        "message": "Fill attribute…",
+        "description": "Context menu parent item for filling a custom attribute."
     },
     "multipleCredentialsDetected": {
         "message": "HTTP authentication with multiple credentials detected. Click on the extension icon to choose the correct one.",
@@ -268,8 +268,8 @@
         "description": "Alert message when no credentials are found for the given username."
     },
     "credentialsNoTOTPFound": {
-      "message": "No TOTP found.",
-      "description": "Alert message when no TOTP is found."
+        "message": "No TOTP found.",
+        "description": "Alert message when no TOTP is found."
     },
     "credentialExpired": {
         "message": "Expired",
@@ -683,6 +683,10 @@
         "message": "Color theme",
         "description": "Theme selection header text."
     },
+    "optionsCredentialSortSelectionHeader": {
+        "message": "Sort matching credentials by",
+        "description": "Credential sort option header text."
+    },
     "optionsThemeSelection": {
         "message": "Select color theme",
         "description": "Theme selection title text."
@@ -774,6 +778,14 @@
     "optionsAutoFillAndSendHelpTextSecond": {
         "message": "An HTTP Basic Auth dialog looks like this:",
         "description": "HTTP Basic Auth image help text."
+    },
+    "optionsClearCredentialsTimeout": {
+        "message": "Clear credentials from non-active tabs after (seconds, 0-3600).",
+        "description": "Clear credentials label text."
+    },
+    "optionsClearCredentialsTimeoutHelpText": {
+        "message": "Credentials are cleared from background tabs after the timeout and permissions for those pages will be asked again.",
+        "description": "Clear credentials timeout help text."
     },
     "optionsVersionInfoText": {
         "message": "KeePassXC-Browser needs KeePassXC to retrieve credentials.",
@@ -907,9 +919,29 @@
         "message": "Disable new/modified credentials",
         "description": "Site preferences option selection."
     },
+    "optionsSelectionAutoSubmit": {
+        "message": "Disable Auto-Submit",
+        "description": "Site preferences option selection."
+    },
     "optionsSelectionFull": {
         "message": "Disable all features",
         "description": "Site preferences option selection."
+    },
+    "optionsSortByTitle": {
+        "message": "Title",
+        "desription": "Sort matching credentials by title option selection."
+    },
+    "optionsSortByUsername": {
+        "message": "Username",
+        "desription": "Sort matching credentials by username option selection."
+    },
+    "optionsSortByGroupAndTitle": {
+        "message": "Group and title",
+        "desription": "Sort matching credentials by group and title option selection."
+    },
+    "optionsSortByGroupAndUsername": {
+        "message": "Group and username",
+        "desription": "Sort matching credentials by group and username option selection."
     },
     "optionsCustomFieldsNotFound": {
         "message": "No saved custom login fields found.",
@@ -1032,8 +1064,8 @@
         "description": "Debug info text."
     },
     "optionsAboutSupporters": {
-      "message": "Supporters",
-      "description": "Supporters label text."
+        "message": "Supporters",
+        "description": "Supporters label text."
     },
     "optionsErrorInvalidValue": {
         "message": "Invalid value. Please check the input.",
