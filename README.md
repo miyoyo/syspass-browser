@@ -10,7 +10,8 @@ Some changes merged also from [smorks](https://github.com/smorks)' [KeePassHttp-
 
 ## Download and use
 
-You can download the extension for [Mozilla Firefox](https://addons.mozilla.org/en-US/firefox/addon/syspass-browser/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search) and [Google Chrome](https://chrome.google.com/webstore/detail/syspass-browser/amllnakjfhdjjlebenhjmheboaojeplk?hl=en)
+You can download the extension for [Mozilla Firefox](https://addons.mozilla.org/en-US/firefox/addon/syspass-browser/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search) and [Google Chrome](https://chrome.google.com/webstore/detail/syspass-browser/amllnakjfhdjjlebenhjmheboaojeplk?hl=en).
+
 See "Development and Testing" for build instructions.
 
 To use it, you will need to create an API key on sysPass:
