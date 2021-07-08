@@ -144,27 +144,63 @@ keepass.testAssociation = async function (tab) {
     }
 
     try {
-        let accountListPromise = await fetch(keepass.address, {
+        let accountListPromise = await fetch(keepass.address || undefined, {
             method: "POST",
             body: JSON.stringify({
                 "jsonrpc": "2.0",
                 "method": "account/search",
                 "params": {
                     "authToken": keepass.apiKey,
-                    "text": '',
+                    "tokenPass": keepass.apiPass,
+                    "id": 170000,
                 },
                 "id": 1
             })
         });
 
-        keepass.isKeePassXCAvailable = accountListPromise.ok;
+        let body = await accountListPromise.json()
 
-        return accountListPromise.ok;
+        if("error" in body) {
+            throw "Failed to verify API Key."
+        }
+
+        if(body["result"]["result"].length === 0) {
+            throw "No accounts available to test API key Password.<br>Please create at least 1 Account."
+        }
+
+        let showPassPromise = await fetch(keepass.address || undefined, {
+            method: "POST",
+            body: JSON.stringify({
+                "jsonrpc": "2.0",
+                "method": "account/viewPass",
+                "params": {
+                    "authToken": keepass.apiKey,
+                    "tokenPass": keepass.apiPass,
+                    "id": body["result"]["result"][0]["id"],
+                },
+                "id": 1
+            })
+        });
+
+        let passBody = await showPassPromise.json()
+
+        if("error" in passBody) {
+            throw "Failed to verify API Key Password."
+        }
+
+        keepass.isKeePassXCAvailable = showPassPromise.ok;
+
+        return keepass.isKeePassXCAvailable;
     } catch (err) {
         keepass.isKeePassXCAvailable = false;
 
-        if(tab !== undefined)
+        if(tab !== undefined){
             page.tabs[tab.id].errorMessage = "Unable to contact sysPass, check configuration (Settings -> Connected Databases).";
+
+            if(typeof err === 'string') {
+                page.tabs[tab.id].errorMessage += "<br>"+err;
+            }
+        }        
         console.log(err)
         return false;
     }
