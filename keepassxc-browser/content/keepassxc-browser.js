@@ -300,7 +300,9 @@ kpxcForm.onSubmit = async function(e) {
         return;
     }
 
-    await kpxc.setPasswordFilled(true);
+    if (passwordField) {
+        await kpxc.setPasswordFilled(true);
+    }
 
     const url = trimURL(kpxc.settings.saveDomainOnlyNewCreds ? window.top.location.origin : window.top.location.href);
     await sendMessage('page_set_submitted', [ true, usernameValue, passwordValue, url, kpxc.credentials ]);
@@ -391,7 +393,10 @@ kpxcFields.getSegmentedTOTPFields = function(inputs, combinations) {
         if (totpInputs.length === 6) {
             const combination = {
                 form: form,
-                totpInputs: totpInputs
+                totpInputs: totpInputs,
+                username: null,
+                password: null,
+                passwordInputs: []
             };
 
             combinations.push(combination);
@@ -413,7 +418,8 @@ kpxcFields.getSegmentedTOTPFields = function(inputs, combinations) {
         || form.length === 6))) {
         // Use the form's elements
         addTotpFieldsToCombination(form.elements);
-    } else if (inputs.length === 6 && inputs.every(i => i.inputMode === 'numeric' && i.pattern.includes('0-9'))) {
+    } else if (inputs.length === 6 && inputs.every(i => (i.inputMode === 'numeric' && i.pattern.includes('0-9'))
+                || i.type === 'tel')) {
         // No form is found, but input fields are possibly segmented TOTP fields
         addTotpFieldsToCombination(inputs);
     }
@@ -565,7 +571,7 @@ kpxcFields.isAutocompleteAppropriate = function(field) {
 // Checks if Custom Login Fields are used for the site
 kpxcFields.isCustomLoginFieldsUsed = function() {
     const location = kpxc.getDocumentLocation();
-    return kpxc.settings['defined-custom-fields'] && kpxc.settings['defined-custom-fields'][location];
+    return kpxc.settings['defined-custom-fields'] !== undefined && kpxc.settings['defined-custom-fields'][location] !== undefined;
 };
 
 // Returns true if form is a search form
@@ -887,7 +893,7 @@ kpxc.fillInFromActiveElement = async function(passOnly = false) {
             return;
         }
 
-        // set focus to the input field
+        // Set focus to the input field
         field.focus();
 
         if (kpxc.credentials.length > 1) {
@@ -896,6 +902,7 @@ kpxc.fillInFromActiveElement = async function(passOnly = false) {
             return;
         } else {
             // Just one credential -> fill the first combination found
+            await sendMessage('page_set_login_id', kpxc.credentials[0].uuid);
             kpxc.fillInCredentials(combination, kpxc.credentials[0].login, kpxc.credentials[0].uuid, passOnly);
             return;
         }
@@ -918,7 +925,7 @@ kpxc.fillInFromActiveElement = async function(passOnly = false) {
         return;
     }
 
-    await sendMessage('page_set_login_id', 0);
+    await sendMessage('page_set_login_id', kpxc.credentials[0].uuid);
     kpxc.fillInCredentials(combination, kpxc.credentials[0].login, kpxc.credentials[0].uuid, passOnly);
 };
 
@@ -929,7 +936,7 @@ kpxc.fillFromAutofill = async function() {
     }
 
     const index = kpxc.combinations.length - 1;
-    await sendMessage('page_set_login_id', 0);
+    await sendMessage('page_set_login_id', kpxc.credentials[0].uuid);
     kpxc.fillInCredentials(kpxc.combinations[index], kpxc.credentials[0].login, kpxc.credentials[0].uuid);
 
     // Generate popup-list of usernames + descriptions
@@ -942,7 +949,7 @@ kpxc.fillFromPopup = async function(id, uuid) {
         return;
     }
 
-    await sendMessage('page_set_login_id', id);
+    await sendMessage('page_set_login_id', uuid);
     const selectedCredentials = kpxc.credentials.find(c => c.uuid === uuid);
     if (!selectedCredentials) {
         console.log('Error: Uuid not found: ', uuid);
@@ -1039,7 +1046,7 @@ kpxc.fillFromUsernameIcon = async function(combination) {
         return;
     }
 
-    await sendMessage('page_set_login_id', 0);
+    await sendMessage('page_set_login_id', kpxc.credentials[0].uuid);
     kpxc.fillInCredentials(combination, kpxc.credentials[0].login, kpxc.credentials[0].uuid);
 };
 
@@ -1506,9 +1513,12 @@ kpxc.rememberCredentials = async function(usernameValue, passwordValue, urlValue
         if (credentialsList.length === 1) {
             usernameValue = credentialsList[0].login;
         } else if (credentialsList.length > 1) {
-            const index = await sendMessage('page_get_login_id');
-            if (index >= 0) {
-                usernameValue = credentialsList[index].login;
+            const uuid = await sendMessage('page_get_login_id');
+            if (uuid) {
+                const credsFromUuid = credentialsList.find(c => c.uuid === uuid);
+                if (credsFromUuid) {
+                    usernameValue = credsFromUuid.login;
+                }
             }
         }
     }
@@ -1704,20 +1714,21 @@ kpxc.updateDatabaseState = async function() {
 
 // Updates the TOTP Autocomplete Menu
 kpxc.updateTOTPList = async function() {
-    let index = await sendMessage('page_get_login_id');
-    if (index < 0) {
+    let uuid = await sendMessage('page_get_login_id');
+    if (uuid === undefined || kpxc.credentials.length === 0) {
         // Credential haven't been selected
         return;
     }
 
     // Use the first credential available if not set
-    if (index === undefined) {
-        index = 0;
+    if (uuid === '') {
+        uuid = kpxc.credentials[0].uuid;
     }
 
-    if (index >= 0 && kpxc.credentials[index]) {
-        const username = kpxc.credentials[index].login;
-        const password = kpxc.credentials[index].password;
+    const credentials = kpxc.credentials.find(c => c.uuid === uuid);
+    if (credentials) {
+        const username = credentials.login;
+        const password = credentials.password;
 
         // If no username is set, compare with a password
         const credentialList = kpxc.credentials.filter(c => (c.totp || (c.stringFields && c.stringFields.some(s => s['KPH: {TOTP}'])))
