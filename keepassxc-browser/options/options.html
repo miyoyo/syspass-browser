@@ -282,8 +282,48 @@
                     <label for="sysPassAPIKeyPass" data-i18n="optionsConnectedDatabasesSysPassAPIKeyPass"></label>
                     <input class="form-control form-control-sm col-lg-10" type="password" id="sysPassAPIKeyPass" required>
                   </div>
-                  <div>
+                  <div style="display: inline-block">
                     <button id="connect-button" class="btn btn-sm btn-success"><i class="fa fa-link" aria-hidden="true"></i><span data-i18n="optionsButtonConnect"></span></button>
+                  </div>
+                  <p></p>
+                  <div class="container">
+                    <div id="initial-state">
+                      <p><div class="loader"></div> <span data-i18n="popupCheckingStatus"/></p>
+                    </div>
+              
+                    <div id="not-configured" style="display: none">
+                      <p data-i18n="popupNotConfigured"></p>
+                    </div>
+              
+                    <div id="need-reconfigure" style="display: none">
+                      <p data-i18n="popupNeedReconfigure"></p>
+                      <p style="margin-left: 1em">
+                        <code id="need-reconfigure-message"></code>
+                      </p>
+                      <p data-i18n="popupNeedReconfigureMessage"></p>
+                    </div>
+              
+                    <div id="configured-not-associated" style="display: none">
+                      <span data-i18n="popupConfiguredNotAssociated" i18n-placeholder="<span class='bg-warning' id='unassociated-identifier'></span>"></span>
+                    </div>
+              
+                    <div id="configured-and-associated" style="display: none">
+                      <p data-i18n="popupConfiguredAndAssociated" i18n-placeholder="<span id='associated-identifier'></span>"></p>
+                    </div>
+              
+                    <div id="error-encountered" style="display: none">
+                      <p data-i18n="popupErrorEncountered"></p>
+                      <p style="margin-left: 1em">
+                        <code id="error-message"></code>
+                      </p>
+                    </div>
+              
+                    <div id="database-not-opened" style="display: none">
+                      <p data-i18n="popupErrorEncountered"></p>
+                      <p style="margin-left: 1em">
+                        <code id="database-error-message"></code>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

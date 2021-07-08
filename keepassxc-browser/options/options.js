@@ -285,17 +285,6 @@ options.showKeePassXCVersions = async function(response) {
     $('#tab-about em.versionKPH').text(response.current);
     $('#tab-about span.kpxcVersion').text(response.current);
     $('#tab-general-settings button.checkUpdateKeePassXC:first').attr('disabled', false);
-
-    const result = await browser.runtime.sendMessage({
-        action: 'compare_version',
-        args: [ '2.6.0', response.current ]
-    });
-
-    if (result) {
-        $('#tab-general-settings #versionRequiredAlert').hide();
-    } else {
-        $('#tab-general-settings #showGroupNameInAutocomplete').attr('disabled', true);
-    }
 };
 
 options.getPartiallyHiddenKey = function(key) {
@@ -369,6 +358,43 @@ options.initConnectedDatabases = function() {
         $('#tab-connected-databases table tbody:first tr.empty:first').show();
     }
 
+    function statusResponse(r) {
+        $('#initial-state').hide();
+        $('#error-encountered').hide();
+        $('#need-reconfigure').hide();
+        $('#not-configured').hide();
+        $('#configured-and-associated').hide();
+        $('#configured-not-associated').hide();
+        $('#lock-database-button').hide();
+    
+        if (!r.keePassXCAvailable) {
+            $('#error-message').html(r.error);
+            $('#error-encountered').show();
+        } else if (r.keePassXCAvailable && r.databaseClosed) {
+            $('#database-error-message').html(r.error);
+            $('#database-not-opened').show();
+        } else if (!r.configured) {
+            $('#not-configured').show();
+        } else if (r.encryptionKeyUnrecognized) {
+            $('#need-reconfigure').show();
+            $('#need-reconfigure-message').html(r.error);
+        } else if (!r.associated) {
+            $('#need-reconfigure').show();
+            $('#need-reconfigure-message').html(r.error);
+        } else if (r.error !== null) {
+            $('#error-encountered').show();
+            $('#error-message').html(r.error);
+        } else {
+            $('#configured-and-associated').show();
+            $('#associated-identifier').html(r.identifier);
+            $('#lock-database-button').show();
+    
+            if (r.usernameFieldDetected) {
+                $('#username-field-detected').show();
+            }
+        }
+    }
+
     $('#connect-button').click(async function() {
         const url = document.getElementById("sysPassURL").value
         const apiKey = document.getElementById("sysPassAPIKey").value
@@ -385,7 +411,21 @@ options.initConnectedDatabases = function() {
         
         await options.saveKeyRing();
 
+        $('#initial-state').show();
+        $('#error-encountered').hide();
+        $('#need-reconfigure').hide();
+        $('#not-configured').hide();
+        $('#configured-and-associated').hide();
+        $('#configured-not-associated').hide();
+        $('#lock-database-button').hide();
+
         const result = await browser.runtime.sendMessage({ action: 'associate' });
+
+        const sm = await browser.runtime.sendMessage({
+            action: 'get_status'
+        });
+
+        statusResponse(sm);
 
         if (result === AssociatedAction.NEW_ASSOCIATION) {
             // Update the connection list with the added hash
@@ -410,6 +450,14 @@ options.initConnectedDatabases = function() {
         document.getElementById("sysPassAPIKey").value = options.keyRing[Object.keys(options.keyRing)[0]].hash;
         document.getElementById("sysPassAPIKeyPass").value = "Password"
     }
+
+    $(async function() {
+        const sm = await browser.runtime.sendMessage({
+            action: 'get_status'
+        });
+
+        statusResponse(sm);
+    })
 };
 
 options.initCustomCredentialFields = function() {
