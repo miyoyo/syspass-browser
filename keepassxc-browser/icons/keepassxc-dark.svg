@@ -13,18 +13,12 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)"
-   sodipodi:docname="disconnected.svg"
+   sodipodi:docname="keepassxc-dark.svg"
    inkscape:export-filename="C:\Users\hidden\logo_dark.png"
    inkscape:export-xdpi="15.473302"
    inkscape:export-ydpi="15.473302">
   <defs
      id="defs2">
-    <rect
-       x="101.77623"
-       y="149.29675"
-       width="48.22377"
-       height="60.703247"
-       id="rect853" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
        inkscape:vp_x="45.924107 : 50.27745 : 1"
@@ -40,9 +34,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5"
-     inkscape:cx="272.05511"
-     inkscape:cy="653.63466"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="148.2062"
+     inkscape:cy="491.11413"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -115,20 +109,5 @@
        d="m 27.267232,120.23902 c -0.8302,0 -1.49847,0.66828 -1.49847,1.49848 v 6.28197 l -4.44199,-4.44198 c -0.58704,-0.58704 -1.53251,-0.58704 -2.11955,0 l -4.81912,4.81912 c -0.58704,0.58704 -0.58704,1.5325 0,2.11954 l 4.44199,4.44199 h -6.281971 c -0.83021,0 -1.498481,0.66827 -1.498481,1.49848 v 6.81553 c 0,0.8302 0.668271,1.49848 1.498481,1.49848 h 6.281971 l -4.44199,4.44199 c -0.58704,0.58704 -0.58704,1.53251 0,2.11955 l 4.81912,4.81912 c 0.58704,0.58704 1.53251,0.58704 2.11955,0 l 4.44199,-4.44198 v 6.28196 c 0,0.83021 0.66827,1.49847 1.49847,1.49847 h 6.81554 c 0.83021,0 1.49847,-0.66826 1.49847,-1.49847 v -6.28196 l 4.44199,4.44198 c 0.58704,0.58704 1.5325,0.58704 2.11956,0 l 4.81911,-4.81912 c 0.58705,-0.58704 0.58705,-1.53251 0,-2.11955 l -4.44199,-4.44199 h 6.28198 c 0.83021,0 1.49847,-0.66826 1.49847,-1.49848 v -6.81553 c 0,-0.83021 -0.66826,-1.49848 -1.49847,-1.49848 h -6.28198 l 4.44199,-4.44199 c 0.58705,-0.58704 0.58705,-1.5325 0,-2.11954 l -4.81911,-4.81912 c -0.58706,-0.58704 -1.53252,-0.58704 -2.11956,0 l -4.44199,4.44198 v -6.28197 c 0,-0.8302 -0.66826,-1.49848 -1.49847,-1.49848 z"
        inkscape:export-xdpi="15.473302"
        inkscape:export-ydpi="15.473302" />
-    <rect
-       style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:2"
-       id="rect837"
-       width="48.22377"
-       height="60.703243"
-       x="101.77623"
-       y="149.29675" />
-    <text
-       xml:space="preserve"
-       id="text851"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:50.8px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';word-spacing:0px;white-space:pre;shape-inside:url(#rect853);fill:#ffffff;fill-opacity:1;stroke:none;"
-       transform="translate(5.3320271,2.9934187)"><tspan
-         x="101.77539"
-         y="195.64325"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:50.8px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#ffffff">X</tspan></tspan></text>
   </g>
 </svg>

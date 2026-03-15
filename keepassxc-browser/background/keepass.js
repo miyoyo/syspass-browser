@@ -1,55 +1,66 @@
 'use strict';
 
+// sysPass adapter for keepassxc-browser
+// Replaces KeePassXC native messaging protocol with sysPass JSON-RPC 2.0 API
+
 const keepass = {};
 keepass.associated = { 'value': false, 'hash': null };
+keepass.cacheTimeout = 30 * 1000;
+keepass.currentKeePassXC = 'sysPass';
+keepass.databaseHash = '';
+keepass.isConnected = false;
+keepass.isDatabaseClosed = false;
+keepass.isEncryptionKeyUnrecognized = false;
+keepass.isKeePassXCAvailable = false;
+keepass.latestKeePassXC = { 'version': 'N/A', 'lastChecked': null };
+keepass.previousDatabaseHash = '';
+keepass.reconnectLoop = null;
+keepass.requiredKeePassXC = '0.0.0';
+
+// Feature flags: sysPass supports credentials and local password generation only
 keepass.featuresList = {
     downloadFaviconAfterSave: false,
     newTotp: false,
-    passwordGenerator: false,
+    passwordGenerator: true,
     passkeys: false,
     passkeysDefaultGroup: false,
-    requiredKeePassXCVersionFound: false,
-};
-keepass.cacheTimeout = 30 * 1000; // Milliseconds
-keepass.clientID = '';
-keepass.currentKeePassXC = '';
-keepass.databaseHash = '';
-keepass.isConnected = false;
-keepass.isDatabaseClosed = true;
-keepass.isEncryptionKeyUnrecognized = false;
-keepass.isKeePassXCAvailable = false;
-keepass.keyPair = { publicKey: null, secretKey: null };
-keepass.latestVersionUrl = 'https://api.github.com/repos/keepassxreboot/keepassxc/releases/latest';
-keepass.previousDatabaseHash = '';
-keepass.reconnectLoop = null;
-keepass.requiredKeePassXC = '2.6.0';
-keepass.serverPublicKey = '';
-
-const DEFAULT_FETCH_TIMEOUT = 5000; // ms
-const MAX_RELATED_ORIGIN_LABELS = 60;
-
-const kpActions = {
-    SET_LOGIN: 'set-login',
-    GET_LOGINS: 'get-logins',
-    GENERATE_PASSWORD: 'generate-password',
-    ASSOCIATE: 'associate',
-    TEST_ASSOCIATE: 'test-associate',
-    GET_DATABASE_HASH: 'get-databasehash',
-    CHANGE_PUBLIC_KEYS: 'change-public-keys',
-    LOCK_DATABASE: 'lock-database',
-    DATABASE_LOCKED: 'database-locked',
-    DATABASE_UNLOCKED: 'database-unlocked',
-    GET_DATABASE_GROUPS: 'get-database-groups',
-    CREATE_NEW_GROUP: 'create-new-group',
-    GET_TOTP: 'get-totp',
-    REQUEST_AUTOTYPE: 'request-autotype',
-    PASSKEYS_REGISTER: 'passkeys-register',
-    PASSKEYS_GET: 'passkeys-get'
+    requiredKeePassXCVersionFound: true,
 };
 
-browser.storage.local.get({ 'latestKeePassXC': { 'version': '', 'lastChecked': null }, 'keyRing': {} }).then((item) => {
+browser.storage.local.get({ 'latestKeePassXC': { 'version': 'N/A', 'lastChecked': null }, 'keyRing': {} }).then((item) => {
     keepass.latestKeePassXC = item.latestKeePassXC;
     keepass.keyRing = item.keyRing;
+});
+
+//--------------------------------------------------------------------------
+// KeyRing accessors for sysPass credentials
+//--------------------------------------------------------------------------
+
+// Returns the first keyRing entry (sysPass uses a single connection)
+keepass.getActiveKey = function() {
+    const keys = Object.keys(keepass.keyRing);
+    if (keys.length === 0) {
+        return null;
+    }
+    return keepass.keyRing[keys[0]];
+};
+
+Object.defineProperty(keepass, 'address', {
+    get() {
+        return keepass.getActiveKey()?.id || '';
+    }
+});
+
+Object.defineProperty(keepass, 'apiKey', {
+    get() {
+        return keepass.getActiveKey()?.hash || '';
+    }
+});
+
+Object.defineProperty(keepass, 'apiPass', {
+    get() {
+        return keepass.getActiveKey()?.key || '';
+    }
 });
 
 //--------------------------------------------------------------------------
@@ -57,60 +68,38 @@ browser.storage.local.get({ 'latestKeePassXC': { 'version': '', 'lastChecked': n
 //--------------------------------------------------------------------------
 
 keepass.addCredentials = async function(tab, args = []) {
-    const [ username, password, url, group, groupUuid ] = args;
-    return keepass.updateCredentials(tab, [ null, username, password, url, group, groupUuid ]);
+    const [ username, password, url ] = args;
+    return keepass.updateCredentials(tab, [ null, username, password, url ]);
 };
 
 keepass.updateCredentials = async function(tab, args = []) {
     try {
-        const [ entryId, username, password, url, group, groupUuid ] = args;
+        const [ entryId, username, password, url ] = args;
         const taResponse = await keepass.testAssociation(tab);
         if (!taResponse) {
             browserAction.showDefault(tab);
-            return [];
+            return 'error';
         }
-
-        const kpAction = kpActions.SET_LOGIN;
-        const [ dbid ] = keepass.getCryptoKey();
-        const nonce = keepassClient.getNonce();
-
-        const messageData = {
-            action: kpAction,
-            id: dbid,
-            login: username,
-            password: password,
-            url: url,
-            submitUrl: url
-        };
 
         if (entryId) {
-            messageData.uuid = entryId;
-        }
-
-        if (!entryId && page.settings.downloadFaviconAfterSave) {
-            messageData.downloadFavicon = 'true';
-        }
-
-        if (group && groupUuid) {
-            messageData.group = group;
-            messageData.groupUuid = groupUuid;
-        }
-
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            // KeePassXC versions lower than 2.5.0 will have an empty parsed.error
-            let successMessage = response.error;
-            if (response.error === 'success' || response.error === '') {
-                successMessage = entryId ? 'updated' : 'created';
-            }
-
-            return successMessage;
+            // Update existing account
+            await syspassClient.editAccount(
+                keepass.address, keepass.apiKey, keepass.apiPass,
+                entryId,
+                { login: username, password: password, url: url }
+            );
+            return 'updated';
         } else {
-            return 'error';
+            // Create new account
+            await syspassClient.createAccount(
+                keepass.address, keepass.apiKey, keepass.apiPass,
+                { login: username, password: password, url: url, name: url }
+            );
+            return 'created';
         }
     } catch (err) {
         logError(`updateCredentials failed: ${err}`);
-        return [];
+        return 'error';
     }
 };
 
@@ -125,46 +114,53 @@ keepass.retrieveCredentials = async function(tab, args = []) {
 
         keepass.clearErrorMessage(tab);
 
-        if (!keepass.isConnected) {
+        if (!keepass.isKeePassXCAvailable) {
             return [];
         }
 
-        let entries = [];
-        const kpAction = kpActions.GET_LOGINS;
-        const nonce = keepassClient.getNonce();
-        const [ dbid ] = keepass.getCryptoKey();
+        const target = new URL(url);
+        const accounts = await syspassClient.searchAccounts(
+            keepass.address, keepass.apiKey, target.hostname
+        );
 
-        const messageData = {
-            action: kpAction,
-            id: dbid,
-            url: url,
-            keys: keepass.getCryptoKeys()
-        };
-
-        if (submiturl) {
-            messageData.submitUrl = submiturl;
+        if (!accounts || accounts.length === 0) {
+            browserAction.showDefault(tab);
+            logDebug(`No entries found for url ${url}`);
+            return [];
         }
 
-        if (httpAuth) {
-            messageData.httpAuth = 'true';
+        // Fetch passwords for all matching accounts in parallel
+        const entries = await Promise.all(
+            accounts.map(async (account) => {
+                try {
+                    const password = await syspassClient.viewPassword(
+                        keepass.address, keepass.apiKey, keepass.apiPass, account.id
+                    );
+
+                    return {
+                        login: account.login,
+                        name: account.name,
+                        password: password,
+                        uuid: String(account.id),
+                        group: account.categoryName || '',
+                        stringFields: []
+                    };
+                } catch (err) {
+                    logError(`Failed to fetch password for account ${account.id}: ${err}`);
+                    return null;
+                }
+            })
+        );
+
+        const validEntries = removeDuplicateEntries(entries.filter(e => e !== null));
+        keepass.updateLastUsed(keepass.databaseHash);
+
+        if (validEntries.length === 0) {
+            browserAction.showDefault(tab);
         }
 
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            entries = removeDuplicateEntries(response.entries);
-            keepass.updateLastUsed(keepass.databaseHash);
-
-            if (entries.length === 0) {
-                // Questionmark-icon is not triggered, so we have to trigger for the normal symbol
-                browserAction.showDefault(tab);
-            }
-
-            logDebug(`Found ${entries.length} entries for url ${url}`);
-            return entries;
-        }
-
-        browserAction.showDefault(tab);
-        return [];
+        logDebug(`Found ${validEntries.length} entries for url ${url}`);
+        return validEntries;
     } catch (err) {
         logError(`retrieveCredentials failed: ${err}`);
         return [];
@@ -172,86 +168,37 @@ keepass.retrieveCredentials = async function(tab, args = []) {
 };
 
 keepass.generatePassword = async function(tab) {
-    if (!keepass.isConnected) {
-        return undefined;
+    // Local password generation since sysPass does not provide an API for this
+    const length = 32;
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!$&*=?_-@#%';
+    const array = new Uint8Array(length);
+    crypto.getRandomValues(array);
+
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        password += charset[array[i] % charset.length];
     }
 
-    try {
-        const taResponse = await keepass.testAssociation(tab);
-        if (!taResponse) {
-            browserAction.showDefault(tab);
-            return '';
-        }
-
-        if (!keepass.featuresList.passwordGenerator) {
-            return '';
-        }
-
-        let password;
-        const kpAction = kpActions.GENERATE_PASSWORD;
-        const nonce = keepassClient.getNonce();
-
-        const messageData = {
-            action: kpAction,
-            nonce: nonce,
-            clientID: keepass.clientID,
-            requestID: keepassClient.getRequestId()
-        };
-
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            password = response.entries ?? response.password;
-            keepass.updateLastUsed(keepass.databaseHash);
-        } else {
-            logError('generatePassword rejected');
-        }
-
-        return password;
-    } catch (err) {
-        logError(`generatePassword failed: ${err}`);
-        return undefined;
-    }
+    return [ {
+        password: password,
+        login: 0,
+        entropy: 0
+    } ];
 };
 
 keepass.associate = async function(tab) {
+    // For sysPass, association is handled via the options page (URL + API key + password).
+    // This function is called from the popup Connect button, which should open the options page.
     if (keepass.isAssociated()) {
         return AssociatedAction.ASSOCIATED;
     }
 
-    try {
-        await keepass.getDatabaseHash(tab);
-        if (keepass.isDatabaseClosed || !keepass.isKeePassXCAvailable) {
-            return AssociatedAction.NOT_ASSOCIATED;
+    // If already configured, test the association
+    if (Object.keys(keepass.keyRing).length > 0) {
+        const result = await keepass.testAssociation(tab);
+        if (result) {
+            return AssociatedAction.ASSOCIATED;
         }
-
-        keepass.clearErrorMessage(tab);
-
-        const kpAction = kpActions.ASSOCIATE;
-        const key = nacl.util.encodeBase64(keepass.keyPair.publicKey);
-        const nonce = keepassClient.getNonce();
-        const idKeyPair = nacl.box.keyPair();
-        const idKey = nacl.util.encodeBase64(idKeyPair.publicKey);
-
-        const messageData = {
-            action: kpAction,
-            key: key,
-            idKey: idKey
-        };
-
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce, false, true);
-        if (response) {
-            keepass.setCryptoKey(response.id, idKey);
-            keepass.associated.value = true;
-            keepass.associated.hash = response.hash || 0;
-
-            browserAction.showDefault(tab);
-            return AssociatedAction.NEW_ASSOCIATION;
-        }
-
-        keepass.handleError(tab, kpErrors.ASSOCIATION_FAILED);
-        return AssociatedAction.NOT_ASSOCIATED;
-    } catch (err) {
-        logError(`associate failed: ${err}`);
     }
 
     return AssociatedAction.NOT_ASSOCIATED;
@@ -261,428 +208,96 @@ keepass.testAssociation = async function(tab, args = []) {
     keepass.clearErrorMessage(tab);
 
     try {
-        const [ enableTimeout = false, triggerUnlock = false ] = args;
-        const dbHash = await keepass.getDatabaseHash(tab, [ enableTimeout, triggerUnlock ]);
-        if (!dbHash) {
-            return false;
-        }
-
-        if (keepass.isDatabaseClosed || !keepass.isKeePassXCAvailable) {
-            return false;
-        }
-
-        if (!keepass.serverPublicKey) {
-            if (tab && page.tabs[tab.id]) {
-                keepass.handleError(tab, kpErrors.PUBLIC_KEY_NOT_FOUND);
-            }
-            return false;
-        }
-
-        const kpAction = kpActions.TEST_ASSOCIATE;
-        const nonce = keepassClient.getNonce();
-        const [ dbid, dbkey ] = keepass.getCryptoKey();
-
-        if (dbkey === null || dbid === null) {
+        if (Object.keys(keepass.keyRing).length === 0) {
+            keepass.isKeePassXCAvailable = false;
+            keepass.isConnected = false;
             if (tab && page.tabs[tab.id]) {
                 keepass.handleError(tab, kpErrors.NO_SAVED_DATABASES_FOUND);
             }
             return false;
         }
 
-        const messageData = {
-            action: kpAction,
-            id: dbid,
-            key: dbkey
-        };
+        // Set databaseHash to the API key hash for compatibility
+        keepass.databaseHash = keepass.apiKey;
 
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce, enableTimeout);
-        if (!response) {
-            const hash = response.hash || 0;
-            keepass.deleteKey(hash);
-            keepass.isEncryptionKeyUnrecognized = true;
-            keepass.handleError(tab, kpErrors.ENCRYPTION_KEY_UNRECOGNIZED);
-            keepass.associated.value = false;
-            keepass.associated.hash = null;
-        } else if (!keepass.isAssociated()) {
-            keepass.handleError(tab, kpErrors.ASSOCIATION_FAILED);
-        } else {
-            keepass.isEncryptionKeyUnrecognized = false;
-            keepass.clearErrorMessage(tab);
+        await syspassClient.testConnection(keepass.address, keepass.apiKey, keepass.apiPass);
+
+        keepass.isKeePassXCAvailable = true;
+        keepass.isConnected = true;
+        keepass.isDatabaseClosed = false;
+        keepass.isEncryptionKeyUnrecognized = false;
+        keepass.associated.value = true;
+        keepass.associated.hash = keepass.databaseHash;
+
+        return true;
+    } catch (err) {
+        keepass.isKeePassXCAvailable = false;
+        keepass.isConnected = false;
+
+        if (tab && page.tabs[tab.id]) {
+            page.tabs[tab.id].errorMessage =
+                'Unable to contact sysPass, check configuration (Settings > Connected Databases).'
+                + (typeof err === 'string' ? ' ' + err : '');
         }
 
-        return keepass.isAssociated();
-    } catch (err) {
         logError(`testAssociation failed: ${err}`);
         return false;
     }
 };
 
 keepass.getDatabaseHash = async function(tab, args = []) {
-    if (!keepass.isConnected) {
+    // For sysPass, the "database hash" is the API key
+    if (Object.keys(keepass.keyRing).length === 0) {
         keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
         return '';
     }
 
-    if (!keepass.serverPublicKey) {
-        keepass.changePublicKeys(tab);
-    }
-
-    const [ enableTimeout = false, triggerUnlock = false ] = args;
-    const kpAction = kpActions.GET_DATABASE_HASH;
-    const [ nonce, incrementedNonce ] = keepassClient.getNonces();
-
-    const messageData = {
-        action: kpAction,
-        connectedKeys: Object.keys(keepass.keyRing) // This will be removed in the future
-    };
-
-    const encrypted = keepassClient.encrypt(messageData, nonce);
-    if (encrypted.length <= 0) {
-        keepass.handleError(tab, kpErrors.PUBLIC_KEY_NOT_FOUND);
-        keepass.updateDatabaseHashToContent();
-        return keepass.databaseHash;
-    }
-
-    try {
-        const request = keepassClient.buildRequest(
-            kpAction,
-            keepassClient.encrypt(messageData, nonce),
-            nonce,
-            keepass.clientID,
-            triggerUnlock,
-        );
-        const response = await keepassClient.sendNativeMessage(request, enableTimeout);
-        if (response.message && response.nonce) {
-            const res = keepassClient.decrypt(response.message, response.nonce);
-            if (!res) {
-                keepass.handleError(tab, kpErrors.CANNOT_DECRYPT_MESSAGE);
-                return '';
-            }
-
-            const message = nacl.util.encodeUTF8(res);
-            const parsed = JSON.parse(message);
-            if (keepassClient.verifyDatabaseResponse(parsed, incrementedNonce) && parsed.hash) {
-                const oldDatabaseHash = keepass.databaseHash;
-                keepass.setcurrentKeePassXCVersion(parsed.version);
-                keepass.databaseHash = parsed.hash || '';
-
-                if (oldDatabaseHash && oldDatabaseHash !== keepass.databaseHash) {
-                    keepass.associated.value = false;
-                    keepass.associated.hash = null;
-                }
-
-                keepass.isDatabaseClosed = false;
-                keepass.isKeePassXCAvailable = true;
-
-                // Update the databaseHash from legacy hash
-                if (parsed.oldHash) {
-                    keepass.updateDatabaseHash(parsed.oldHash, parsed.hash);
-                }
-
-                return parsed.hash;
-            } else if (parsed.errorCode) {
-                keepass.databaseHash = '';
-                keepass.isDatabaseClosed = true;
-                keepass.handleError(tab, kpErrors.DATABASE_NOT_OPENED);
-                return keepass.databaseHash;
-            }
-
-            return keepass.databaseHash;
-        }
-
-        keepass.databaseHash = '';
-        keepass.isDatabaseClosed = true;
-        if ((response.message && response.message === '') || response.errorCode === kpErrors.TIMEOUT_OR_NOT_CONNECTED) {
-            keepass.isKeePassXCAvailable = false;
-            keepass.isConnected = false;
-            keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
-        } else {
-            keepass.handleError(tab, response.errorCode, response.error);
-        }
-        return keepass.databaseHash;
-    } catch (err) {
-        logError(`getDatabaseHash failed: ${err}`);
-        return keepass.databaseHash;
-    }
+    keepass.databaseHash = keepass.apiKey;
+    return keepass.databaseHash;
 };
 
-keepass.changePublicKeys = async function(tab, enableTimeout = false, connectionTimeout) {
-    if (!keepass.isConnected) {
-        keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
-        return false;
-    }
-
-    const kpAction = kpActions.CHANGE_PUBLIC_KEYS;
-    const key = nacl.util.encodeBase64(keepass.keyPair.publicKey);
-    const [ nonce, incrementedNonce ] = keepassClient.getNonces();
-    keepass.clientID = nacl.util.encodeBase64(nacl.randomBytes(keepassClient.keySize));
-
-    const request = {
-        action: kpAction,
-        publicKey: key,
-        nonce: nonce,
-        clientID: keepass.clientID
-    };
-
-    try {
-        const response = await keepassClient.sendNativeMessage(request, enableTimeout, connectionTimeout);
-        keepass.setcurrentKeePassXCVersion(response.version);
-        keepass.updateFeaturesList(response.version);
-
-        if (!keepassClient.verifyKeyResponse(response, key, incrementedNonce)) {
-            if (tab && page.tabs[tab.id]) {
-                keepass.handleError(tab, kpErrors.KEY_CHANGE_FAILED);
-            }
-
-            keepass.updateDatabaseHashToContent();
-            return false;
-        }
-
-        keepass.isKeePassXCAvailable = true;
-        console.log(`${EXTENSION_NAME}: Server public key: ${nacl.util.encodeBase64(keepass.serverPublicKey)}`);
-        return true;
-    } catch (err) {
-        logError(`changePublicKeys failed: ${err}`);
-        return false;
-    }
+// Stubs for KeePassXC-specific functions not applicable to sysPass
+keepass.changePublicKeys = async function() {
+    return true;
 };
 
 keepass.lockDatabase = async function(tab) {
-    if (!keepass.isConnected) {
-        keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
-        return false;
+    // Lock triggers the passkey re-auth flow
+    keepass.isDatabaseClosed = true;
+    keepass.associated.value = false;
+    keepass.associated.hash = null;
+
+    if (syspassCrypto && typeof syspassCrypto.lock === 'function') {
+        syspassCrypto.lock();
     }
 
-    const kpAction = kpActions.LOCK_DATABASE;
-    const nonce = keepassClient.getNonce();
-
-    const messageData = {
-        action: kpAction
-    };
-
-    try {
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            keepass.isDatabaseClosed = true;
-            keepass.updateDatabase();
-
-            // Display error message in the popup
-            keepass.handleError(tab, kpErrors.DATABASE_NOT_OPENED);
-            return true;
-        } else {
-            keepass.isDatabaseClosed = true;
-        }
-
-        return false;
-    } catch (err) {
-        logError(`ockDatabase failed: ${err}`);
-        return false;
-    }
+    keepass.updateDatabase();
+    keepass.handleError(tab, kpErrors.DATABASE_NOT_OPENED);
+    return true;
 };
 
-keepass.getDatabaseGroups = async function(tab) {
-    try {
-        const taResponse = await keepass.testAssociation(tab, [ false ]);
-        if (!taResponse) {
-            browserAction.showDefault(tab);
-            return [];
-        }
-
-        keepass.clearErrorMessage(tab);
-
-        if (!keepass.isConnected) {
-            return [];
-        }
-
-        let groups = [];
-        const kpAction = kpActions.GET_DATABASE_GROUPS;
-        const nonce = keepassClient.getNonce();
-
-        const messageData = {
-            action: kpAction
-        };
-
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            groups = response.groups;
-            groups.defaultGroup = page.settings.defaultGroup;
-            groups.defaultGroupAlwaysAsk = page.settings.defaultGroupAlwaysAsk;
-            keepass.updateLastUsed(keepass.databaseHash);
-            return groups;
-        }
-
-        browserAction.showDefault(tab);
-        return [];
-    } catch (err) {
-        logError(`getDatabaseGroups failed: ${err}`);
-        return [];
-    }
+keepass.getDatabaseGroups = async function() {
+    return [];
 };
 
-keepass.createNewGroup = async function(tab, args = []) {
-    try {
-        const [ groupName ] = args;
-        const taResponse = await keepass.testAssociation(tab, [ false ]);
-        if (!taResponse) {
-            browserAction.showDefault(tab);
-            return [];
-        }
-
-        keepass.clearErrorMessage(tab);
-
-        if (!keepass.isConnected) {
-            return [];
-        }
-
-        const kpAction = kpActions.CREATE_NEW_GROUP;
-        const nonce = keepassClient.getNonce();
-
-        const messageData = {
-            action: kpAction,
-            groupName: groupName
-        };
-
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            keepass.updateLastUsed(keepass.databaseHash);
-            return response;
-        } else {
-            logError('getDatabaseGroups rejected');
-        }
-
-        browserAction.showDefault(tab);
-        return [];
-    } catch (err) {
-        logError(`createNewGroup failed: ${err}`);
-        return [];
-    }
+keepass.createNewGroup = async function() {
+    return [];
 };
 
 keepass.getTotp = async function(tab, args = []) {
-    const [ uuid, oldTotp ] = args;
-    if (!keepass.featuresList.newTotpSupported) {
-        return oldTotp;
-    }
-
-    const taResponse = await keepass.testAssociation(tab, [ false ]);
-    if (!taResponse || !keepass.isConnected) {
-        return;
-    }
-
-    const kpAction = kpActions.GET_TOTP;
-    const nonce = keepassClient.getNonce();
-
-    const messageData = {
-        action: kpAction,
-        uuid: uuid
-    };
-
-    try {
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            keepass.updateLastUsed(keepass.databaseHash);
-            return response.totp;
-        }
-
-        return;
-    } catch (err) {
-        logError(`getTotp failed: ${err}`);
-    }
+    return args[1]; // Return oldTotp
 };
 
-keepass.requestAutotype = async function(tab, args = []) {
-    if (!keepass.isConnected) {
-        keepass.handleError(tab, kpErrors.TIMEOUT_OR_NOT_CONNECTED);
-        return false;
-    }
-
-    const kpAction = kpActions.REQUEST_AUTOTYPE;
-    const nonce = keepassClient.getNonce();
-    const search = await page.getBaseDomainFromUrl(args[0]);
-
-    const messageData = {
-        action: kpAction,
-        search: search
-    };
-
-    try {
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        return response;
-    } catch (err) {
-        logError(`requestAutotype failed: ${err}`);
-        return false;
-    }
+keepass.requestAutotype = async function() {
+    return false;
 };
 
-keepass.passkeysRegister = async function(tab, args = []) {
-    try {
-        const taResponse = await keepass.testAssociation(tab, [ false ]);
-        if (!taResponse || !keepass.isConnected || args.length < 2) {
-            browserAction.showDefault(tab);
-            return [];
-        }
-
-        const kpAction = kpActions.PASSKEYS_REGISTER;
-        const nonce = keepassClient.getNonce();
-        const [ publicKey, origin ] = args;
-        const passkeyPublicKey = JSON.parse(JSON.stringify(publicKey));
-        const relatedOrigins = await keepass.getPasskeysRelatedOrigins(passkeyPublicKey?.rp?.id);
-
-        const messageData = {
-            action: kpAction,
-            publicKey: passkeyPublicKey,
-            origin: origin,
-            relatedOrigins: relatedOrigins,
-            groupName: page?.settings?.defaultPasskeyGroup,
-            keys: keepass.getCryptoKeys()
-        };
-
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            return response;
-        }
-
-        browserAction.showDefault(tab);
-        return [];
-    } catch (err) {
-        logError(`passkeysRegister failed: ${err}`);
-        return [];
-    }
+keepass.passkeysRegister = async function() {
+    return [];
 };
 
-keepass.passkeysGet = async function(tab, args = []) {
-    try {
-        const taResponse = await keepass.testAssociation(tab, [ false ]);
-        if (!taResponse || !keepass.isConnected || args.length < 2) {
-            browserAction.showDefault(tab);
-            return [];
-        }
-
-        const kpAction = kpActions.PASSKEYS_GET;
-        const nonce = keepassClient.getNonce();
-        const [ publicKey, origin ] = args;
-        const passkeyPublicKey = JSON.parse(JSON.stringify(publicKey));
-        const relatedOrigins = await keepass.getPasskeysRelatedOrigins(passkeyPublicKey?.rp?.id);
-
-        const messageData = {
-            action: kpAction,
-            publicKey: passkeyPublicKey,
-            origin: origin,
-            relatedOrigins: relatedOrigins,
-            keys: keepass.getCryptoKeys()
-        };
-
-        const response = await keepassClient.sendMessage(kpAction, tab, messageData, nonce);
-        if (response) {
-            return response;
-        }
-
-        browserAction.showDefault(tab);
-        return [];
-    } catch (err) {
-        logError(`passkeysGet failed: ${err}`);
-        return [];
-    }
+keepass.passkeysGet = async function() {
+    return [];
 };
 
 //--------------------------------------------------------------------------
@@ -690,10 +305,9 @@ keepass.passkeysGet = async function(tab, args = []) {
 //--------------------------------------------------------------------------
 
 keepass.migrateKeyRing = function() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         browser.storage.local.get('keyRing').then((item) => {
             const keyring = item.keyRing;
-            // Change dates to numbers, for compatibilty with Chromium based browsers
             if (keyring) {
                 let num = 0;
                 for (const keyHash in keyring) {
@@ -731,7 +345,6 @@ keepass.saveKey = function(hash, id, key) {
         keepass.keyRing[hash].id = id;
         keepass.keyRing[hash].key = key;
         keepass.keyRing[hash].hash = hash;
-        keepass.keyRing[hash].created = new Date().valueOf();
         keepass.keyRing[hash].lastUsed = new Date().valueOf();
     }
 
@@ -745,7 +358,6 @@ keepass.updateLastUsed = function(hash) {
     }
 };
 
-// Update the databaseHash from legacy hash
 keepass.updateDatabaseHash = function(oldHash, newHash) {
     if (!oldHash || !newHash || oldHash === newHash) {
         return;
@@ -765,20 +377,11 @@ keepass.deleteKey = function(hash) {
 };
 
 keepass.getCryptoKey = function() {
-    let dbkey = null;
-    let dbid = null;
-
-    if (!(keepass.databaseHash in keepass.keyRing)) {
-        return [ dbid, dbkey ];
+    const activeKey = keepass.getActiveKey();
+    if (!activeKey) {
+        return [ null, null ];
     }
-
-    dbid = keepass.keyRing[keepass.databaseHash].id;
-
-    if (dbid) {
-        dbkey = keepass.keyRing[keepass.databaseHash].key;
-    }
-
-    return [ dbid, dbkey ];
+    return [ activeKey.id, activeKey.key ];
 };
 
 keepass.setCryptoKey = function(id, key) {
@@ -787,14 +390,12 @@ keepass.setCryptoKey = function(id, key) {
 
 keepass.getCryptoKeys = function() {
     const keys = [];
-
     for (const keyHash in keepass.keyRing) {
         keys.push({
             id: keepass.keyRing[keyHash].id,
             key: keepass.keyRing[keyHash].key
         });
     }
-
     return keys;
 };
 
@@ -803,16 +404,15 @@ keepass.getCryptoKeys = function() {
 //--------------------------------------------------------------------------
 
 keepass.enableAutomaticReconnect = async function() {
-    // Disable for Windows if KeePassXC is older than 2.3.4
     if (!page.settings.autoReconnect) {
         return;
     }
     if (keepass.reconnectLoop === null) {
         keepass.reconnectLoop = setInterval(async () => {
-            if (!keepass.isKeePassXCAvailable) {
+            if (!keepass.isKeePassXCAvailable && Object.keys(keepass.keyRing).length > 0) {
                 keepass.reconnect();
             }
-        }, 1000);
+        }, 30000); // Check every 30 seconds (longer interval than native messaging)
     }
 };
 
@@ -821,27 +421,25 @@ keepass.disableAutomaticReconnect = function() {
     keepass.reconnectLoop = null;
 };
 
-keepass.reconnect = async function(tab = null, connectionTimeout = 1500) {
-    keepassClient.connectToNative();
-    keepass.generateNewKeyPair();
-    const keyChangeResult = await keepass
-        .changePublicKeys(tab, !!connectionTimeout, connectionTimeout)
-        .catch(() => false);
-
-    // Change public keys timeout
-    if (!keyChangeResult) {
+keepass.reconnect = async function(tab = null, connectionTimeout = 5000) {
+    if (Object.keys(keepass.keyRing).length === 0) {
+        keepass.isKeePassXCAvailable = false;
+        keepass.isConnected = false;
         return false;
     }
 
-    const hash = await keepass.getDatabaseHash(tab);
-    if (hash !== '') {
-        keepass.clearErrorMessage(tab);
+    try {
+        const result = await keepass.testAssociation(tab);
+        if (result) {
+            keepass.clearErrorMessage(tab);
+            keepass.updateDatabaseHashToContent();
+            return true;
+        }
+    } catch (err) {
+        logError(`reconnect failed: ${err}`);
     }
 
-    await keepass.testAssociation();
-    await keepass.isConfigured();
-    keepass.updateDatabaseHashToContent();
-    return true;
+    return false;
 };
 
 //--------------------------------------------------------------------------
@@ -853,16 +451,11 @@ keepass.getErrorMessage = async function(tab, errorCode) {
 };
 
 keepass.generateNewKeyPair = function() {
-    keepass.keyPair = nacl.box.keyPair();
+    // No-op: sysPass uses API key auth, not key pairs
 };
 
 keepass.isConfigured = async function() {
-    if (typeof(keepass.databaseHash) === 'undefined') {
-        const hash = keepass.getDatabaseHash();
-        return Object.hasOwn(keepass.keyRing, hash);
-    }
-
-    return keepass.databaseHash in keepass.keyRing;
+    return Object.keys(keepass.keyRing).length > 0;
 };
 
 keepass.checkDatabaseHash = async function(tab) {
@@ -870,83 +463,22 @@ keepass.checkDatabaseHash = async function(tab) {
 };
 
 keepass.isAssociated = function() {
-    return (keepass.associated.value && keepass.associated.hash && keepass.associated.hash === keepass.databaseHash);
+    return keepass.associated.value && keepass.associated.hash && keepass.associated.hash === keepass.databaseHash;
 };
 
 keepass.setcurrentKeePassXCVersion = function(version) {
-    if (version) {
-        keepass.currentKeePassXC = version;
-    }
+    // No-op for sysPass
 };
 
 keepass.keePassXCUpdateAvailable = async function() {
-    const checkUpdate = Number(page.settings.checkUpdateKeePassXC);
-    if (checkUpdate !== CHECK_UPDATE_NEVER) {
-        const lastChecked = keepass.latestKeePassXC.lastChecked
-            ? new Date(keepass.latestKeePassXC.lastChecked)
-            : new Date(1986, 11, 21);
-        const daysSinceLastCheck = Math.floor(((new Date()).getTime() - lastChecked.getTime()) / 86400000);
-        if (daysSinceLastCheck >= checkUpdate) {
-            await keepass.checkForNewKeePassXCVersion();
-        }
-
-        return compareVersion(keepass.currentKeePassXC, keepass.latestKeePassXC.version, false);
-    }
-
     return false;
 };
 
 keepass.checkForNewKeePassXCVersion = async function() {
-    let version = -1;
-
-    try {
-        const response = await fetch(keepass.latestVersionUrl, { signal: AbortSignal.timeout(DEFAULT_FETCH_TIMEOUT) });
-        const jsonData = await response.json();
-        if (jsonData?.tag_name && jsonData?.prerelease === false) {
-            version = jsonData.tag_name;
-            keepass.latestKeePassXC.version = version;
-        }
-    } catch (ex) {
-        logError(`checkForNewKeePassXCVersion error: ${ex}`);
-    }
-    keepass.latestKeePassXC.lastChecked = new Date().valueOf();
+    // No-op
 };
 
-// Implements retrieval of Related Origin Requests for passkeys
-// https://www.w3.org/TR/webauthn-3/#sctn-related-origins
-keepass.getPasskeysRelatedOrigins = async function(rpId) {
-    if (!rpId) {
-        return [];
-    }
-
-    try {
-        const response = await fetch(`https://${rpId}/.well-known/webauthn`, {
-            signal: AbortSignal.timeout(DEFAULT_FETCH_TIMEOUT),
-        });
-
-        // Basic reply validation, see: https://www.w3.org/TR/webauthn-3/#sctn-validating-relation-origin
-        const isJson = response?.headers?.get('content-type')?.includes('application/json');
-        if (!isJson) {
-            logError('getRelatedOrigins error: Content-Type is not JSON');
-            return [];
-        }
-
-        const jsonData = await response.json();
-        if (!Array.isArray(jsonData?.origins)
-            || jsonData?.origins?.length === 0
-            || jsonData?.origins?.length > MAX_RELATED_ORIGIN_LABELS
-            || !jsonData?.origins?.every((origin) => typeof origin === 'string')) {
-            logError(
-                `getRelatedOrigins error: origins is not a list of strings, or it exceeds the maximum count of ${MAX_RELATED_ORIGIN_LABELS}`,
-            );
-            return [];
-        }
-
-        return jsonData.origins;
-    } catch (ex) {
-        logError(`getRelatedOrigins error: ${ex}`);
-    }
-
+keepass.getPasskeysRelatedOrigins = async function() {
     return [];
 };
 
@@ -973,7 +505,6 @@ keepass.updatePopup = function() {
     }
 };
 
-// Updates the database hashes to content script
 keepass.updateDatabase = async function() {
     keepass.associated.value = false;
     keepass.associated.hash = null;
@@ -989,12 +520,11 @@ keepass.updateDatabaseHashToContent = async function() {
     try {
         const tab = await getCurrentTab();
         if (tab?.id) {
-            // Send message to content script
             browser.tabs.sendMessage(tab.id, {
                 action: 'check_database_hash',
                 hash: { old: keepass.previousDatabaseHash, new: keepass.databaseHash },
                 connected: keepass.isKeePassXCAvailable
-            }).catch((err) => {
+            }).catch(() => {
                 logError('No content script available for this tab.');
             });
             keepass.previousDatabaseHash = keepass.databaseHash;
@@ -1004,26 +534,18 @@ keepass.updateDatabaseHashToContent = async function() {
     }
 };
 
-keepass.updateFeaturesList = function (currentVersion) {
-    const versionResults = keepass.compareMultipleVersions([
-        keepass.requiredKeePassXC,
-        '2.6.1',
-        '2.7.0',
-        '2.7.7',
-        '2.7.10'
-    ], currentVersion);
-
+keepass.updateFeaturesList = function() {
+    // Static features for sysPass
     keepass.featuresList = {
-        downloadFaviconAfterSave: versionResults['2.7.0'],
-        newTotp: versionResults['2.6.1'],
-        passwordGenerator: versionResults['2.7.0'],
-        passkeys: versionResults['2.7.7'],
-        passkeysDefaultGroup: versionResults['2.7.10'],
-        requiredKeePassXCVersionFound: versionResults[keepass.requiredKeePassXC],
+        downloadFaviconAfterSave: false,
+        newTotp: false,
+        passwordGenerator: true,
+        passkeys: false,
+        passkeysDefaultGroup: false,
+        requiredKeePassXCVersionFound: true,
     };
 };
 
-// Expects an array of versions to compare
 keepass.compareMultipleVersions = function(versions, current, canBeEqual = true) {
     if (!Array.isArray(versions)) {
         return {};
@@ -1031,7 +553,7 @@ keepass.compareMultipleVersions = function(versions, current, canBeEqual = true)
 
     const result = {};
     for (const version of versions) {
-        result[version] = compareVersion(version, current, canBeEqual);
+        result[version] = true; // All version checks pass for sysPass
     }
 
     return result;
@@ -1039,14 +561,11 @@ keepass.compareMultipleVersions = function(versions, current, canBeEqual = true)
 
 const removeDuplicateEntries = function(arr) {
     const newArray = [];
-
     for (const a of arr) {
         if (newArray.some(i => i.uuid === a.uuid)) {
             continue;
         }
-
         newArray.push(a);
     }
-
     return newArray;
 };

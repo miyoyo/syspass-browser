@@ -392,96 +392,274 @@ options.getPartiallyHiddenKey = function(key) {
 };
 
 options.initConnectedDatabases = function() {
-    const dialogDeleteConnectedDatabaseModal = new bootstrap.Modal('#dialogDeleteConnectedDatabase',
-        { keyboard: true, focus: false, backdrop: true });
+    const statusEl = $('#syspass-status');
+    const connectionInfo = $('#syspass-connection-info');
+    const connectBtn = $('#syspass-connect-button');
+    const disconnectBtn = $('#syspass-disconnect-button');
 
-    $('#dialogDeleteConnectedDatabase').addEventListener('shown.bs.modal', function(modalEvent) {
-        modalEvent.currentTarget.querySelector('.modal-footer button.yes').focus();
-    });
+    const showStatus = function(message, type) {
+        statusEl.textContent = message;
+        statusEl.className = 'alert mb-3 alert-' + type;
+    };
 
-    $('#dialogDeleteConnectedDatabase .modal-footer button.yes').addEventListener('click', async function(e) {
-        dialogDeleteConnectedDatabaseModal.hide();
+    const hideStatus = function() {
+        statusEl.className = 'alert d-none mb-3';
+    };
 
-        const hash = $('#dialogDeleteConnectedDatabase').getAttribute('hash');
-        $('#tab-connected-databases #tr-cd-' + hash).remove();
+    const updateConnectionDisplay = function() {
+        const keys = Object.keys(options.keyRing);
+        if (keys.length > 0) {
+            const entry = options.keyRing[keys[0]];
+            $('#sysPassURL').value = entry.id || '';
+            $('#sysPassAPIKey').value = entry.hash || '';
+            $('#sysPassAPIKeyPass').value = '';
 
-        delete options.keyRing[hash];
-        options.saveKeyRing();
-        hashList = options.keyRing;
+            $('#syspass-info-url').textContent = entry.id;
+            $('#syspass-info-key').textContent = options.getPartiallyHiddenKey(entry.hash);
+            $('#syspass-info-lastused').textContent = entry.lastUsed
+                ? new Date(entry.lastUsed).toLocaleString() : 'never';
+            $('#syspass-info-created').textContent = entry.created
+                ? new Date(entry.created).toLocaleDateString() : 'unknown';
 
-        // Force reconnect so the extension will disconnect the current database
-        await browser.runtime.sendMessage({ action: 'reconnect' }).catch(err => {
-            console.log(err);
-        });
+            connectionInfo.classList.remove('d-none');
+            disconnectBtn.classList.remove('d-none');
+        } else {
+            connectionInfo.classList.add('d-none');
+            disconnectBtn.classList.add('d-none');
+        }
+    };
 
-        browser.runtime.sendMessage({ action: 'update_popup' });
-    });
+    updateConnectionDisplay();
 
-    const removeButtonClicked = function(e) {
-        e.preventDefault();
+    connectBtn.addEventListener('click', async function() {
+        const url = $('#sysPassURL').value.trim();
+        const apiKey = $('#sysPassAPIKey').value.trim();
+        const apiPass = $('#sysPassAPIKeyPass').value.trim();
 
-        const closestTr = this.closest('tr');
-        $('#dialogDeleteConnectedDatabase').setAttribute('hash', closestTr.getAttribute('hash'));
-        $('#dialogDeleteConnectedDatabase').setAttribute('tr-id', closestTr.getAttribute('id'));
-
-        const identifier = $('#dialogDeleteConnectedDatabase .modal-body strong');
-        if (identifier) {
-            identifier.textContent = closestTr.children[0].textContent;
+        if (!url || !apiKey || !apiPass) {
+            showStatus('Please fill in all fields.', 'warning');
+            return;
         }
 
-        dialogDeleteConnectedDatabaseModal.show();
+        showStatus('Connecting...', 'info');
+        connectBtn.disabled = true;
+
+        try {
+            // Save to keyRing
+            options.keyRing = {};
+            options.keyRing[apiKey] = {
+                id: url,
+                key: apiPass,
+                hash: apiKey,
+                created: new Date().valueOf(),
+                lastUsed: new Date().valueOf()
+            };
+
+            await options.saveKeyRing();
+
+            // Test the connection
+            const result = await browser.runtime.sendMessage({ action: 'reconnect' });
+
+            if (result && result.keePassXCAvailable) {
+                showStatus('Connected to sysPass successfully!', 'success');
+                updateConnectionDisplay();
+            } else if (result && result.error) {
+                showStatus('Connection failed: ' + result.error, 'danger');
+            } else {
+                showStatus('Connected to sysPass.', 'success');
+                updateConnectionDisplay();
+            }
+        } catch (err) {
+            showStatus('Connection failed: ' + err.message, 'danger');
+        } finally {
+            connectBtn.disabled = false;
+        }
+    });
+
+    disconnectBtn.addEventListener('click', async function() {
+        options.keyRing = {};
+        await options.saveKeyRing();
+        await browser.runtime.sendMessage({ action: 'syspass_clear_crypto' }).catch(() => {});
+        await browser.runtime.sendMessage({ action: 'reconnect' }).catch(() => {});
+        browser.runtime.sendMessage({ action: 'update_popup' });
+
+        connectionInfo.classList.add('d-none');
+        disconnectBtn.classList.add('d-none');
+        hideStatus();
+
+        $('#sysPassURL').value = '';
+        $('#sysPassAPIKey').value = '';
+        $('#sysPassAPIKeyPass').value = '';
+    });
+
+    // Passkey protection setup
+    options.initPasskeyProtection();
+};
+
+options.initPasskeyProtection = async function() {
+    const setupBtn = $('#passkey-setup-button');
+    const removeBtn = $('#passkey-remove-button');
+    const statusEl = $('#passkey-status');
+    const unsupportedEl = $('#passkey-unsupported');
+    const lockModeSelect = $('#passkeyLockMode');
+    const timeoutInput = $('#passkeyLockTimeout');
+    const timeoutGroup = $('#passkeyTimeoutGroup');
+
+    const showPasskeyStatus = function(message, type) {
+        statusEl.textContent = message;
+        statusEl.className = 'alert mb-3 alert-' + type;
     };
 
-    const rowClone = $('#tab-connected-databases table tr.clone').cloneNode(true);
-    rowClone.classList.remove('clone', 'd-none');
-
-    const addHashToTable = function(hash) {
-        const row = rowClone.cloneNode(true);
-        row.setAttribute('hash', hash);
-        row.setAttribute('id', 'tr-cd-' + hash);
-
-        const lastUsed = options.keyRing[hash].lastUsed
-            ? new Date(options.keyRing[hash].lastUsed).toLocaleString()
-            : 'unknown';
-        const date = options.keyRing[hash].created
-            ? new Date(options.keyRing[hash].created).toLocaleDateString()
-            : 'unknown';
-
-        row.children[0].textContent = options.keyRing[hash].id;
-        row.children[1].textContent = options.getPartiallyHiddenKey(options.keyRing[hash].key);
-        row.children[2].textContent = lastUsed;
-        row.children[3].textContent = date;
-        row.children[4].addEventListener('click', removeButtonClicked);
-
-        $('#tab-connected-databases table tbody').append(row);
-    };
-
-    let hashList = options.keyRing;
-    for (const hash in hashList) {
-        addHashToTable(hash);
+    // Check PRF support
+    const prfSupported = await checkPrfSupport();
+    if (!prfSupported) {
+        unsupportedEl.classList.remove('d-none');
+        setupBtn.disabled = true;
     }
 
-    $('#connect-button').addEventListener('click', async function() {
-        const result = await browser.runtime.sendMessage({ action: 'associate' });
+    // Load current state
+    const cryptoState = await browser.runtime.sendMessage({ action: 'syspass_get_crypto_state' }).catch(() => null);
+    if (cryptoState) {
+        lockModeSelect.value = cryptoState.lockSettings?.mode || 'session';
+        timeoutInput.value = cryptoState.lockSettings?.timeout || 15;
+        timeoutGroup.style.display = lockModeSelect.value === 'timed' ? 'block' : 'none';
 
-        if (result === AssociatedAction.NEW_ASSOCIATION) {
-            // Update the connection list with the added hash
-            options.keyRing = await browser.runtime.sendMessage({ action: 'load_keyring' });
+        if (cryptoState.state !== 'not_configured') {
+            setupBtn.classList.add('d-none');
+            removeBtn.classList.remove('d-none');
+            showPasskeyStatus('Passkey protection is active. State: ' + cryptoState.state, 'success');
+        }
+    }
 
-            // This one is the first hash added
-            if (Object.keys(options.keyRing).length === 1) {
-                addHashToTable(Object.keys(options.keyRing)[0]);
-                hashList = options.keyRing;
+    lockModeSelect.addEventListener('change', function() {
+        timeoutGroup.style.display = this.value === 'timed' ? 'block' : 'none';
+        browser.runtime.sendMessage({
+            action: 'syspass_save_lock_settings',
+            args: [this.value, parseInt(timeoutInput.value)]
+        });
+    });
+
+    timeoutInput.addEventListener('change', function() {
+        browser.runtime.sendMessage({
+            action: 'syspass_save_lock_settings',
+            args: [lockModeSelect.value, parseInt(this.value)]
+        });
+    });
+
+    setupBtn.addEventListener('click', async function() {
+        if (Object.keys(options.keyRing).length === 0) {
+            showPasskeyStatus('Connect to sysPass first before setting up passkey protection.', 'warning');
+            return;
+        }
+
+        try {
+            showPasskeyStatus('Creating passkey...', 'info');
+
+            // Create a PRF-capable credential
+            const credential = await navigator.credentials.create({
+                publicKey: {
+                    rp: { name: 'sysPass-Browser Extension', id: location.hostname || 'syspass-browser' },
+                    user: {
+                        id: crypto.getRandomValues(new Uint8Array(32)),
+                        name: 'syspass-browser-key',
+                        displayName: 'sysPass Browser Encryption Key'
+                    },
+                    challenge: crypto.getRandomValues(new Uint8Array(32)),
+                    pubKeyCredParams: [
+                        { type: 'public-key', alg: -7 },
+                        { type: 'public-key', alg: -257 }
+                    ],
+                    extensions: {
+                        prf: {
+                            eval: {
+                                first: new TextEncoder().encode('syspass-browser-prf-v1')
+                            }
+                        }
+                    },
+                    authenticatorSelection: {
+                        userVerification: 'required',
+                        residentKey: 'required',
+                        requireResidentKey: true
+                    }
+                }
+            });
+
+            if (!credential) {
+                showPasskeyStatus('Passkey creation was cancelled.', 'warning');
                 return;
             }
 
-            for (const hash in hashList) {
-                const newHash = Object.keys(options.keyRing).find(h => h !== hash);
-                addHashToTable(newHash);
+            // Get PRF output
+            const prfResult = credential.getClientExtensionResults()?.prf;
+            if (!prfResult?.results?.first) {
+                showPasskeyStatus('Your authenticator does not support PRF. Credentials will remain unencrypted.', 'warning');
+                return;
             }
+
+            // Save lock settings first
+            await browser.runtime.sendMessage({
+                action: 'syspass_save_lock_settings',
+                args: [lockModeSelect.value, parseInt(timeoutInput.value)]
+            });
+
+            // Encrypt and store
+            const prfB64 = arrayBufferToBase64(prfResult.results.first);
+            const credIdB64 = arrayBufferToBase64(credential.rawId);
+
+            const success = await browser.runtime.sendMessage({
+                action: 'syspass_encrypt_keyring',
+                args: [prfB64, credIdB64]
+            });
+
+            if (success) {
+                showPasskeyStatus('Passkey protection set up successfully!', 'success');
+                setupBtn.classList.add('d-none');
+                removeBtn.classList.remove('d-none');
+            } else {
+                showPasskeyStatus('Failed to encrypt credentials.', 'danger');
+            }
+        } catch (err) {
+            showPasskeyStatus('Passkey setup failed: ' + err.message, 'danger');
         }
     });
+
+    removeBtn.addEventListener('click', async function() {
+        await browser.runtime.sendMessage({ action: 'syspass_clear_crypto' });
+        showPasskeyStatus('Passkey protection removed. Credentials are now stored unencrypted.', 'info');
+        removeBtn.classList.add('d-none');
+        setupBtn.classList.remove('d-none');
+    });
 };
+
+async function checkPrfSupport() {
+    try {
+        if (!window.PublicKeyCredential) {
+            return false;
+        }
+        // Basic check that the WebAuthn API is available
+        return typeof navigator.credentials?.create === 'function';
+    } catch {
+        return false;
+    }
+}
+
+function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+function base64ToArrayBuffer(base64) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
 
 options.initCustomLoginFields = function() {
     const dialogDeleteCustomLoginFieldsModal = new bootstrap.Modal('#dialogDeleteCustomLoginFields',

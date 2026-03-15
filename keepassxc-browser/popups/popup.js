@@ -82,20 +82,15 @@ const sendMessageToTab = async function(message) {
     await initColorTheme();
 
     $('#connect-button').addEventListener('click', async () => {
-        await browser.runtime.sendMessage({
-            action: 'associate'
-        });
-
-        // This does not work with Firefox because of https://bugzilla.mozilla.org/show_bug.cgi?id=1665380
-        await sendMessageToTab('retrieve_credentials_forced');
+        // Open options page to Connected Databases tab for sysPass configuration
+        browser.runtime.openOptionsPage();
         close();
     });
 
     $('#reconnect-button').addEventListener('click', async () => {
-        await browser.runtime.sendMessage({
-            action: 'associate'
-        });
-        close();
+        statusResponse(await browser.runtime.sendMessage({
+            action: 'reconnect'
+        }));
     });
 
     $('#reload-status-button').addEventListener('click', async () => {
@@ -111,11 +106,59 @@ const sendMessageToTab = async function(message) {
     });
 
     $('#reopen-database-button').addEventListener('click', async () => {
+        // Try passkey unlock
+        try {
+            const cryptoState = await browser.runtime.sendMessage({ action: 'syspass_get_crypto_state' });
+
+            if (cryptoState && cryptoState.credentialId && cryptoState.prfSalt) {
+                // Perform passkey authentication with PRF
+                const credentialId = base64ToArrayBufferPopup(cryptoState.credentialId);
+                const prfSalt = base64ToArrayBufferPopup(cryptoState.prfSalt);
+
+                const assertion = await navigator.credentials.get({
+                    publicKey: {
+                        challenge: crypto.getRandomValues(new Uint8Array(32)),
+                        allowCredentials: [{
+                            type: 'public-key',
+                            id: credentialId
+                        }],
+                        userVerification: 'required',
+                        extensions: {
+                            prf: {
+                                eval: {
+                                    first: new TextEncoder().encode('syspass-browser-prf-v1')
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const prfResult = assertion?.getClientExtensionResults()?.prf;
+                if (prfResult?.results?.first) {
+                    const prfB64 = arrayBufferToBase64Popup(prfResult.results.first);
+                    const unlocked = await browser.runtime.sendMessage({
+                        action: 'syspass_unlock',
+                        args: [prfB64]
+                    });
+
+                    if (unlocked) {
+                        statusResponse(await browser.runtime.sendMessage({
+                            action: 'get_status',
+                            args: [false, false, true]
+                        }));
+                        return;
+                    }
+                }
+            }
+        } catch (err) {
+            console.log('Passkey unlock failed:', err);
+        }
+
+        // Fallback: try normal reconnect
         statusResponse(await browser.runtime.sendMessage({
             action: 'get_status',
-            args: [ false, true ] // Set forcePopup to true
+            args: [ false, true ]
         }));
-        window.close();
     });
 
     $('#redetect-fields-button').addEventListener('click', async () => {
@@ -165,3 +208,21 @@ const sendMessageToTab = async function(message) {
         logError('Could not get status: ' + err);
     }));
 })();
+
+function arrayBufferToBase64Popup(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+function base64ToArrayBufferPopup(base64) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+}

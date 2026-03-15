@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "KeePassXC integration for modern web browsers",
+        "message": "sysPass integration for modern web browsers",
         "description": "Name of the extension."
     },
     "addSitePreferenceButtonTitle": {
@@ -16,7 +16,7 @@
         "description": "Allow Cross-Origin iframes button title text."
     },
     "connectButtonTitle": {
-        "message": "Connect current active database to KeePassXC-Browser.",
+        "message": "Connect to sysPass server.",
         "description": "Connect button title text."
     },
     "copyDebugInfoButtonTitle": {

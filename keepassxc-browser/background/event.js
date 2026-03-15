@@ -245,6 +245,50 @@ kpxcEvent.getFeaturesList = async function() {
     return keepass.featuresList;
 };
 
+// sysPass crypto handlers (called from popup/options pages)
+kpxcEvent.syspassUnlock = async function(tab, args = []) {
+    const [ prfOutput ] = args;
+    if (!prfOutput) {
+        return false;
+    }
+    const buffer = base64ToBuffer(prfOutput);
+    return await syspassCrypto.unlock(buffer);
+};
+
+kpxcEvent.syspassGetCryptoState = async function() {
+    return {
+        state: syspassCrypto.state,
+        lockSettings: await syspassCrypto.loadLockSettings(),
+        credentialId: await syspassCrypto.getCredentialId()
+            ? bufferToBase64(await syspassCrypto.getCredentialId())
+            : null,
+        prfSalt: await syspassCrypto.getPrfSalt()
+            ? bufferToBase64(await syspassCrypto.getPrfSalt())
+            : null,
+    };
+};
+
+kpxcEvent.syspassEncryptKeyRing = async function(tab, args = []) {
+    const [ prfOutputB64, credentialIdB64 ] = args;
+    if (!prfOutputB64 || !credentialIdB64) {
+        return false;
+    }
+    return await syspassCrypto.encryptAndStore(
+        base64ToBuffer(prfOutputB64),
+        base64ToBuffer(credentialIdB64),
+        keepass.keyRing
+    );
+};
+
+kpxcEvent.syspassSaveLockSettings = async function(tab, args = []) {
+    const [ mode, timeout ] = args;
+    await syspassCrypto.saveLockSettings(mode, timeout);
+};
+
+kpxcEvent.syspassClearCrypto = async function() {
+    await syspassCrypto.clear();
+};
+
 // All methods named in this object have to be declared BEFORE this!
 kpxcEvent.messageHandlers = {
     'add_credentials': keepass.addCredentials,
@@ -308,5 +352,10 @@ kpxcEvent.messageHandlers = {
     'save_settings': kpxcEvent.onSaveSettings,
     'update_available_keepassxc': kpxcEvent.onUpdateAvailableKeePassXC,
     'update_context_menu': page.updateContextMenu,
-    'update_popup': page.updatePopup
+    'update_popup': page.updatePopup,
+    'syspass_unlock': kpxcEvent.syspassUnlock,
+    'syspass_get_crypto_state': kpxcEvent.syspassGetCryptoState,
+    'syspass_encrypt_keyring': kpxcEvent.syspassEncryptKeyRing,
+    'syspass_save_lock_settings': kpxcEvent.syspassSaveLockSettings,
+    'syspass_clear_crypto': kpxcEvent.syspassClearCrypto,
 };
