@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
-    "name": "KeePassXC-Browser",
+    "name": "sysPass-Browser",
     "version": "1.10.0.1",
     "description": "__MSG_extensionDescription__",
-    "author": "KeePassXC Team",
+    "author": "miyoyo (based on keepassxc-browser by KeePassXC Team)",
     "icons": {
         "16": "icons/keepassxc.svg",
         "32": "icons/keepassxc.svg",
@@ -22,7 +22,7 @@
             "38": "icons/keepassxc.svg",
             "64": "icons/keepassxc.svg"
         },
-        "default_title": "KeePassXC-Browser",
+        "default_title": "sysPass-Browser",
         "default_popup": "popups/popup.html"
     },
     "options_ui": {
@@ -34,9 +34,8 @@
             "common/browser-polyfill.min.js",
             "common/global.js",
             "common/sites.js",
-            "background/nacl.min.js",
-            "background/nacl-util.min.js",
-            "background/client.js",
+            "background/syspass-client.js",
+            "background/syspass-crypto.js",
             "background/keepass.js",
             "background/httpauth.js",
             "background/offscreen.js",
@@ -77,21 +76,6 @@
             ],
             "run_at": "document_idle",
             "all_frames": true
-        },
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "exclude_matches": [
-                "*://*/*.xml*",
-                "file:///*.xml*"
-            ],
-            "js": [
-                "content/passkeys-inject.js",
-                "content/passkeys-utils.js"
-            ],
-            "run_at": "document_start",
-            "all_frames": true
         }
     ],
     "commands": {
@@ -107,13 +91,6 @@
             "suggested_key": {
                 "default": "Alt+Shift+I",
                 "mac": "MacCtrl+Shift+I"
-            }
-        },
-        "fill_totp": {
-            "description": "__MSG_contextMenuFillTOTP__",
-            "suggested_key": {
-                "default": "Alt+Shift+O",
-                "mac": "MacCtrl+Shift+O"
             }
         },
         "show_password_generator": {
@@ -135,12 +112,6 @@
         "retrieve_credentials_forced": {
             "description": "__MSG_credentialsRetrieveButton__"
         },
-        "request_autotype": {
-            "description": "__MSG_contextMenuRequestGlobalAutoType__"
-        },
-        "reopen_database": {
-            "description": "__MSG_popupReopenButton__"
-        },
         "reload_extension": {
             "description": "__MSG_popupReloadButton__"
         }
@@ -151,7 +122,6 @@
         "icons/keepassxc.svg",
         "icons/key.svg",
         "icons/locked.svg",
-        "icons/otp.svg",
         "css/autocomplete.css",
         "css/banner.css",
         "css/button.css",
@@ -159,16 +129,12 @@
         "css/define.css",
         "css/notification.css",
         "css/pwgen.css",
-        "css/username.css",
-        "css/totp.css",
-        "content/passkeys.js"
+        "css/username.css"
     ],
     "permissions": [
         "activeTab",
         "clipboardWrite",
         "contextMenus",
-        "cookies",
-        "nativeMessaging",
         "notifications",
         "storage",
         "tabs",
@@ -176,20 +142,17 @@
         "webRequest",
         "webRequestBlocking",
         "https://*/*",
-        "http://*/*",
-        "https://api.github.com/"
+        "http://*/*"
     ],
-    "optional_permissions": [
-        "privacy"
-    ],
-    "applications": {
+    "browser_specific_settings": {
         "gecko": {
-            "id": "keepassxc-browser@keepassxc.org",
-            "strict_min_version": "100.0"
+            "id": "syspass@railgun.space",
+            "strict_min_version": "115.0",
+            "data_collection_permissions": {
+                "required": ["none"],
+                "optional": []
+            }
         }
-    },
-    "storage": {
-        "managed_schema": "managed_storage.json"
     },
     "default_locale": "en"
 }

@@ -82,11 +82,10 @@ keepass.updateCredentials = async function(tab, args = []) {
         }
 
         if (entryId) {
-            // Update existing account
-            await syspassClient.editAccount(
+            // Update existing account password
+            await syspassClient.editPassword(
                 keepass.address, keepass.apiKey, keepass.apiPass,
-                entryId,
-                { login: username, password: password, url: url }
+                entryId, password
             );
             return 'updated';
         } else {
@@ -229,6 +228,9 @@ keepass.testAssociation = async function(tab, args = []) {
         keepass.associated.value = true;
         keepass.associated.hash = keepass.databaseHash;
 
+        // Start lock timer if configured for timed mode
+        keepass.resetLockTimer();
+
         return true;
     } catch (err) {
         keepass.isKeePassXCAvailable = false;
@@ -348,14 +350,26 @@ keepass.saveKey = function(hash, id, key) {
         keepass.keyRing[hash].lastUsed = new Date().valueOf();
     }
 
-    browser.storage.local.set({ 'keyRing': keepass.keyRing });
+    keepass.persistKeyRing();
 };
 
 keepass.updateLastUsed = function(hash) {
     if (Object.hasOwn(keepass.keyRing, hash)) {
         keepass.keyRing[hash].lastUsed = new Date().valueOf();
+        keepass.persistKeyRing();
+    }
+};
+
+// Persist keyRing to appropriate storage based on crypto state
+keepass.persistKeyRing = function() {
+    if (syspassCrypto.isConfigured() && syspassCrypto.isUnlocked()) {
+        // Passkey is set up: write encrypted, never plaintext
+        syspassCrypto.reencryptKeyRing(keepass.keyRing);
+    } else if (!syspassCrypto.isConfigured()) {
+        // No passkey: write plaintext (pre-setup state)
         browser.storage.local.set({ 'keyRing': keepass.keyRing });
     }
+    // If locked, do nothing -- we can't persist without the key
 };
 
 keepass.updateDatabaseHash = function(oldHash, newHash) {
@@ -367,13 +381,13 @@ keepass.updateDatabaseHash = function(oldHash, newHash) {
         keepass.keyRing[newHash] = keepass.keyRing[oldHash];
         keepass.keyRing[newHash].hash = newHash;
         delete keepass.keyRing[oldHash];
-        browser.storage.local.set({ 'keyRing': keepass.keyRing });
+        keepass.persistKeyRing();
     }
 };
 
 keepass.deleteKey = function(hash) {
     delete keepass.keyRing[hash];
-    browser.storage.local.set({ 'keyRing': keepass.keyRing });
+    keepass.persistKeyRing();
 };
 
 keepass.getCryptoKey = function() {
@@ -422,6 +436,21 @@ keepass.disableAutomaticReconnect = function() {
 };
 
 keepass.reconnect = async function(tab = null, connectionTimeout = 5000) {
+    // If passkey is configured and locked, refuse to reconnect.
+    // The only way to get credentials back is through passkey unlock.
+    if (syspassCrypto.isConfigured() && !syspassCrypto.isUnlocked()) {
+        keepass.isKeePassXCAvailable = false;
+        keepass.isConnected = false;
+        keepass.isDatabaseClosed = true;
+        return false;
+    }
+
+    // Only reload from plaintext storage if passkey is NOT configured
+    if (Object.keys(keepass.keyRing).length === 0 && !syspassCrypto.isConfigured()) {
+        const item = await browser.storage.local.get({ 'keyRing': {} });
+        keepass.keyRing = item.keyRing;
+    }
+
     if (Object.keys(keepass.keyRing).length === 0) {
         keepass.isKeePassXCAvailable = false;
         keepass.isConnected = false;
@@ -452,6 +481,15 @@ keepass.getErrorMessage = async function(tab, errorCode) {
 
 keepass.generateNewKeyPair = function() {
     // No-op: sysPass uses API key auth, not key pairs
+};
+
+// Reset the timed lock timer (called after successful API operations)
+keepass.resetLockTimer = async function() {
+    const settings = await syspassCrypto.loadLockSettings();
+    if (settings.mode === 'timed' && settings.timeout > 0) {
+        const timeoutMs = settings.timeout * 60 * 1000;
+        syspassCrypto.startLockTimer(timeoutMs);
+    }
 };
 
 keepass.isConfigured = async function() {

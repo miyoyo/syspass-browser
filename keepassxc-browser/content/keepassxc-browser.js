@@ -659,9 +659,14 @@ kpxc.retrieveCredentials = async function(force = false) {
     kpxc.submitUrl = kpxc.getFormActionUrl(firstCombination);
 
     if (kpxc.settings.autoRetrieveCredentials && kpxc.url && kpxc.submitUrl) {
-        await kpxc.retrieveCredentialsCallback(
-            await sendMessage('retrieve_credentials', [ kpxc.url, kpxc.submitUrl, force ]),
-        );
+        kpxcUsernameIcons.setLoading(true);
+        try {
+            await kpxc.retrieveCredentialsCallback(
+                await sendMessage('retrieve_credentials', [ kpxc.url, kpxc.submitUrl, force ]),
+            );
+        } finally {
+            kpxcUsernameIcons.setLoading(false);
+        }
     }
 };
 
@@ -985,12 +990,16 @@ browser.runtime.onMessage.addListener(async function(req, sender) {
 // Automatically reconnect to KeePassXC
 // returns true if connected afterwards
 kpxc.reconnect = async function() {
-    // Try to reconnect if KeePassXC is not currently connected
+    // Try to reconnect if sysPass is not currently connected
     const connected = await sendMessage('is_connected');
     if (!connected) {
         const reconnectResponse = await sendMessage('reconnect');
         if (!reconnectResponse.keePassXCAvailable) {
-            kpxcUI.createNotification('error', tr('errorNotConnected'));
+            if (reconnectResponse.vaultLocked) {
+                browser.runtime.sendMessage({ action: 'open_unlock_page' });
+            } else {
+                kpxcUI.createNotification('error', tr('errorNotConnected'));
+            }
             return false;
         }
     }

@@ -142,12 +142,12 @@
 }
 
 .kpxcAutocomplete-item--active {
-    background-color: #28a745 !important;
+    background-color: #5c6bc0 !important;
     color: #ffffff !important;
 }
 
 .kpxcAutocomplete-item--active * {
-    background-color: #28a745 !important;
+    background-color: #5c6bc0 !important;
     color: #ffffff !important;
 }
 

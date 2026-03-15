@@ -117,7 +117,20 @@ syspassClient.createAccount = async function(url, authToken, tokenPass, accountD
     return result;
 };
 
-// Edit an existing account in sysPass
+// Edit an existing account's password in sysPass
+syspassClient.editPassword = async function(url, authToken, tokenPass, accountId, newPassword) {
+    const params = {
+        authToken: authToken,
+        tokenPass: tokenPass,
+        id: accountId,
+        pass: newPassword
+    };
+
+    const result = await syspassClient.sendRequest(url, 'account/editPass', params);
+    return result;
+};
+
+// Edit an existing account's metadata in sysPass
 syspassClient.editAccount = async function(url, authToken, tokenPass, accountId, accountData) {
     const params = {
         authToken: authToken,
@@ -127,9 +140,6 @@ syspassClient.editAccount = async function(url, authToken, tokenPass, accountId,
 
     if (accountData.login) {
         params.login = accountData.login;
-    }
-    if (accountData.password) {
-        params.pass = accountData.password;
     }
     if (accountData.name) {
         params.name = accountData.name;

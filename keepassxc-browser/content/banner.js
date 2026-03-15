@@ -102,18 +102,30 @@ kpxcBanner.create = async function(credentials = {}) {
         updateButton.disabled = true;
     }
 
-    newButton.addEventListener('click', function(e) {
+    newButton.addEventListener('click', async function(e) {
         if (!e.isTrusted) {
             return;
         }
-        kpxcBanner.saveNewCredentials(credentials);
+        kpxcBanner.showButtonSpinner(newButton);
+        updateButton.disabled = true;
+        dismissButton.disabled = true;
+        await kpxcBanner.saveNewCredentials(credentials);
+        kpxcBanner.hideButtonSpinner(newButton);
+        updateButton.disabled = false;
+        dismissButton.disabled = false;
     });
 
-    updateButton.addEventListener('click', function(e) {
+    updateButton.addEventListener('click', async function(e) {
         if (!e.isTrusted) {
             return;
         }
-        kpxcBanner.updateCredentials(credentials);
+        kpxcBanner.showButtonSpinner(updateButton);
+        newButton.disabled = true;
+        dismissButton.disabled = true;
+        await kpxcBanner.updateCredentials(credentials);
+        kpxcBanner.hideButtonSpinner(updateButton);
+        newButton.disabled = false;
+        dismissButton.disabled = false;
         dismissButton.textContent = tr('popupButtonBack');
     });
 
@@ -365,6 +377,30 @@ kpxcBanner.updateCredentials = async function(credentials = {}) {
 
         kpxcBanner.shadowSelector('.kpxc-banner-dialog').style.display = 'block';
     }
+};
+
+kpxcBanner.showButtonSpinner = function(button) {
+    button._originalText = button.textContent;
+    button.textContent = '';
+    const spinner = document.createElement('span');
+    spinner.className = 'kpxc-spinner';
+    spinner.style.cssText = 'display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:kpxc-spin 0.6s linear infinite;vertical-align:middle;margin-right:4px;';
+    button.prepend(spinner);
+    button.append(document.createTextNode('Saving...'));
+    button.disabled = true;
+
+    // Inject keyframes if not already present
+    if (!kpxcBanner._spinnerStyleInjected) {
+        const style = document.createElement('style');
+        style.textContent = '@keyframes kpxc-spin { to { transform: rotate(360deg); } }';
+        (kpxcBanner.wrapper?.shadowRoot || document.head).append(style);
+        kpxcBanner._spinnerStyleInjected = true;
+    }
+};
+
+kpxcBanner.hideButtonSpinner = function(button) {
+    button.textContent = button._originalText || '';
+    button.disabled = false;
 };
 
 kpxcBanner.verifyResult = async function(code) {

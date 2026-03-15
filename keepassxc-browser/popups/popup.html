@@ -19,7 +19,7 @@
     <div class="container">
       <div id="settings" class="settings">
         <div class="action-buttons-area">
-          <button id="options-button" class="btn btn-sm btn-success" data-i18n="[title]popupSettingsText">
+          <button id="options-button" class="btn btn-sm btn-primary" data-i18n="[title]popupSettingsText">
             <i class="fa fa-cog" aria-hidden="true"></i>
           </button>
           <button id="choose-custom-login-fields-button" class="btn btn-sm btn-warning" data-i18n="[title]popupChooseCredentialsText"></button>
@@ -35,7 +35,7 @@
         <div id="update-available" class="alert alert-warning">
           <span data-i18n="popupUpdateAvailable"></span>
           <br>
-          <a target="_blank" class="alert-link" href="https://keepassxc.org/download"><span data-i18n="popupDownloadNewVersion"></span></a>.
+          <a target="_blank" class="alert-link" href="https://github.com/miyoyo/syspass-browser"><span data-i18n="popupDownloadNewVersion"></span></a>.
         </div>
 
         <div id="getting-started-guide" class="alert alert-info alert-dismissible">
@@ -108,8 +108,19 @@
         </div>
       </div>
 
+      <div id="vault-locked">
+        <p><i class="fa fa-lock" aria-hidden="true"></i> Vault is locked.</p>
+        <p class="small">Authenticate with your passkey to unlock.</p>
+        <div class="right-align">
+          <button id="unlock-vault-button" class="btn btn-sm btn-primary" title="Unlock with passkey">
+            <i class="fa fa-key" aria-hidden="true"></i>
+            <span>Unlock</span>
+          </button>
+        </div>
+      </div>
+
       <div id="database-not-opened">
-        <p>Vault is locked.</p>
+        <p data-i18n="popupErrorEncountered"></p>
         <p id="left-margin">
           <code id="database-error-message"></code>
         </p>

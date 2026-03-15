@@ -83,8 +83,6 @@ options.initGeneralSettings = async function() {
         } else if (name === 'autoReconnect') {
             const message = updated.autoReconnect ? 'enable_automatic_reconnect' : 'disable_automatic_reconnect';
             browser.runtime.sendMessage({ action: message });
-        } else if (name === 'passkeys') {
-            $('#passkeysFallback').disabled = !isChecked;
         } else if (name === 'useMonochromeToolbarIcon') {
             browser.runtime.sendMessage({ action: 'update_popup' });
         }
@@ -109,10 +107,7 @@ options.initGeneralSettings = async function() {
         checkbox.addEventListener('click', changeCheckboxValue);
     }
 
-    $('#tab-general-settings input[type=radio]#checkUpdateThreeDays').value = CHECK_UPDATE_THREE_DAYS;
-    $('#tab-general-settings input[type=radio]#checkUpdateOneWeek').value = CHECK_UPDATE_ONE_WEEK;
-    $('#tab-general-settings input[type=radio]#checkUpdateOneMonth').value = CHECK_UPDATE_ONE_MONTH;
-    $('#tab-general-settings input[type=radio]#checkUpdateNever').value = CHECK_UPDATE_NEVER;
+    // Update check radios removed: not applicable for sysPass
 
     $('#tab-general-settings input[type=range]').value = options.settings['redirectAllowance'];
     $('#redirectAllowanceLabel').textContent = tr('optionsRedirectAllowance',
@@ -120,9 +115,7 @@ options.initGeneralSettings = async function() {
 
     $('#tab-general-settings select#credentialSorting').value = options.settings['credentialSorting'];
     $('#tab-general-settings select#afterFillSorting').value = options.settings['afterFillSorting'];
-    $('#tab-general-settings select#afterFillSortingTotp').value = options.settings['afterFillSortingTotp'];
     $('#tab-general-settings input#defaultGroup').value = options.settings['defaultGroup'];
-    $('#tab-general-settings input#defaultPasskeyGroup').value = options.settings['defaultPasskeyGroup'];
     $('#tab-general-settings input#clearCredentialTimeout').value = options.settings['clearCredentialsTimeout'];
 
     const generalSettingsRadioInputs = document.querySelectorAll('#tab-general-settings input[type=radio]');
@@ -158,11 +151,6 @@ options.initGeneralSettings = async function() {
         await options.saveSettings();
     });
 
-    $('#tab-general-settings select#afterFillSortingTotp').addEventListener('change', async function(e) {
-        options.settings['afterFillSortingTotp'] = e.currentTarget.value;
-        await options.saveSettings();
-    });
-
     $('#tab-general-settings input#clearCredentialTimeout').addEventListener('change', async function(e) {
         if (e.target.valueAsNumber < 0 || e.target.valueAsNumber > 3600) {
             return;
@@ -184,18 +172,7 @@ options.initGeneralSettings = async function() {
         await options.saveSettings();
     });
 
-    await browser.runtime.sendMessage({
-        action: 'get_keepassxc_versions'
-    }).then(options.showKeePassXCVersions);
-
-    $('#tab-general-settings button.checkUpdateKeePassXC').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.disabled = true;
-
-        browser.runtime.sendMessage({
-            action: 'check_update_keepassxc'
-        }).then(options.showKeePassXCVersions);
-    });
+    // Update check removed: sysPass-Browser does not check for KeePassXC updates
 
     browser.commands.getAll().then(function(commands) {
         commands.forEach(function(command) {
@@ -239,20 +216,7 @@ options.initGeneralSettings = async function() {
         await options.saveSettings();
     });
 
-    // Default passkey group
-    $('#defaultPasskeyGroupButton').addEventListener('click', async function() {
-        const value = $('#defaultPasskeyGroup').value;
-        options.settings['defaultPasskeyGroup'] = (value.length > 0 ? value : '');
-        await options.saveSettings();
-    });
-
-    $('#defaultPasskeyGroupButtonReset').addEventListener('click', async function() {
-        $('#defaultPasskeyGroup').value = '';
-        options.settings['defaultPasskeyGroup'] = '';
-        await options.saveSettings();
-    });
-
-    $('#passkeysFallback').disabled = options.settings['passkeys'] === false;
+    // KeePassXC passkey group settings removed: not applicable for sysPass
 
     let temporarySettings;
     const dialogImportSettingsModal = new bootstrap.Modal('#dialogImportSettings',
@@ -300,7 +264,7 @@ options.initGeneralSettings = async function() {
         const link = document.createElement('a');
         const file = new Blob([ JSON.stringify(options.settings) ], { type: 'application/json' });
         link.href = URL.createObjectURL(file);
-        link.download = 'keepassxc-browser_settings.json';
+        link.download = 'syspass-browser_settings.json';
         link.click();
     });
 
@@ -351,41 +315,7 @@ options.initGeneralSettings = async function() {
     }
 };
 
-// Also hides/disables any options with KeePassXC versions that are too old
-options.showKeePassXCVersions = async function(response) {
-    if (response.current === '') {
-        response.current = 'unknown';
-    }
-    if (response.latest === '') {
-        response.latest = 'unknown';
-    }
-
-    $('#tab-general-settings .kphVersion span.yourVersion').textContent = response.current;
-    $('#tab-general-settings .kphVersion span.latestVersion').textContent = response.latest;
-    $('#tab-about span.versionKPH').textContent = response.current;
-    $('#tab-about span.kpxcVersion').textContent = response.current;
-    $('#tab-general-settings button.checkUpdateKeePassXC').disabled = false;
-
-    const featureList = await browser.runtime.sendMessage({ action: 'get_features_list' });
-    if (featureList?.requiredKeePassXCVersionFound) {
-        $('#tab-general-settings #versionRequiredAlert').hide();
-    } else {
-        $('#tab-general-settings #showGroupNameInAutocomplete').disabled = true;
-        $('#tab-general-settings #minimumVersionAlert').show();
-    }
-
-    if (!featureList?.downloadFaviconAfterSave) {
-        $('#tab-general-settings #downloadFaviconAfterSaveFormGroup').hide();
-    }
-
-    if (!featureList?.passkeys) {
-        $('#tab-general-settings #passkeysOptionsCard').hide();
-    }
-
-    if (!featureList?.passkeysDefaultGroup) {
-        $('#tab-general-settings #passkeysDefaultGroup').hide();
-    }
-};
+// Version check and feature gating removed: sysPass does not use KeePassXC version checks
 
 options.getPartiallyHiddenKey = function(key) {
     return !key ? 'Error' : (key.substr(0, 8) + '*'.repeat(10));
@@ -406,13 +336,20 @@ options.initConnectedDatabases = function() {
         statusEl.className = 'alert d-none mb-3';
     };
 
-    const updateConnectionDisplay = function() {
+    const updateConnectionDisplay = async function() {
+        const cryptoState = await browser.runtime.sendMessage({ action: 'syspass_get_crypto_state' }).catch(() => null);
+        const isLocked = cryptoState && cryptoState.state === 'locked';
+        const isEncrypted = cryptoState && cryptoState.state !== 'not_configured';
+
         const keys = Object.keys(options.keyRing);
         if (keys.length > 0) {
             const entry = options.keyRing[keys[0]];
             $('#sysPassURL').value = entry.id || '';
             $('#sysPassAPIKey').value = entry.hash || '';
             $('#sysPassAPIKeyPass').value = '';
+            if (isEncrypted) {
+                $('#sysPassAPIKeyPass').placeholder = 'Encrypted with passkey';
+            }
 
             $('#syspass-info-url').textContent = entry.id;
             $('#syspass-info-key').textContent = options.getPartiallyHiddenKey(entry.hash);
@@ -423,6 +360,20 @@ options.initConnectedDatabases = function() {
 
             connectionInfo.classList.remove('d-none');
             disconnectBtn.classList.remove('d-none');
+        } else if (isLocked) {
+            // Passkey is configured but locked -- credentials exist but are encrypted
+            $('#sysPassURL').value = '';
+            $('#sysPassURL').placeholder = 'Locked -- unlock with passkey';
+            $('#sysPassURL').disabled = true;
+            $('#sysPassAPIKey').value = '';
+            $('#sysPassAPIKey').placeholder = 'Locked -- unlock with passkey';
+            $('#sysPassAPIKey').disabled = true;
+            $('#sysPassAPIKeyPass').value = '';
+            $('#sysPassAPIKeyPass').placeholder = 'Locked -- unlock with passkey';
+            $('#sysPassAPIKeyPass').disabled = true;
+            connectBtn.classList.add('d-none');
+            disconnectBtn.classList.add('d-none');
+            showStatus('Vault is locked. Use the extension popup to unlock with your passkey.', 'warning');
         } else {
             connectionInfo.classList.add('d-none');
             disconnectBtn.classList.add('d-none');

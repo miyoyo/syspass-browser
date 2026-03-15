@@ -10,6 +10,16 @@ a {
     text-decoration: none !important;
 }
 
+.btn-success {
+    background-color: #5c6bc0 !important;
+    border-color: #5c6bc0 !important;
+}
+
+.btn-success:hover {
+    background-color: #3f51b5 !important;
+    border-color: #3f51b5 !important;
+}
+
 h1, span.menu-item {
     font-size: 0.65rem;
 }
@@ -44,11 +54,11 @@ input[type="range"] {
 }
 
 input[type="range"]::-moz-range-thumb {
-    background-color: green;
+    background-color: #5c6bc0;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    background-color: green;
+    background-color: #5c6bc0;
 }
 
 input:active {
@@ -171,7 +181,7 @@ table td:last-of-type {
 }
 
 .form-switch > .form-check-input:checked {
-    background-color: green !important;
+    background-color: #5c6bc0 !important;
 }
 
 .help-text {

@@ -63,6 +63,7 @@
           </div>
           <footer class="px-3 mt-4 mb-1 text-uppercase position-absolute small text-muted">
             © 2017-2025 - KeePassXC Team
+            <br>© 2025-2026 - miyoyo (sysPass-Browser)
           </footer>
         </nav>
 
@@ -116,14 +117,7 @@
                     </div>
                   </div>
 
-                  <!-- Activate TOTP icons -->
-                  <div class="form-group">
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" name="showOTPIcon" id="totpIconsCheckBox" value="true">
-                      <label class="form-check-label" for="totpIconsCheckBox" data-i18n="optionsCheckboxOTPIcons"></label>
-                      <div class="form-text" data-i18n="optionsShowOTPIconHelpText"></div>
-                    </div>
-                  </div>
+                  <!-- TOTP icons: hidden, not supported by sysPass -->
 
                   <div class="alert alert-secondary mt-3 col-lg-9" role="alert" id="iconAlert">
                     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
@@ -167,10 +161,10 @@
                 </div>
                 <div class="card-body">
                   <p>
-                    <span data-i18n="contextMenuFillUsernameAndPassword"></span>: <span id="fill_username_password-shortcut">error</span><br>
-                    <span data-i18n="contextMenuFillPassword"></span>: <span id="fill_password-shortcut">error</span><br>
-                    <span data-i18n="contextMenuFillTOTP"></span>: <span id="fill_totp-shortcut">error</span><br>
-                    <span data-i18n="contextMenuShowPasswordGenerator"></span>: <span id="show_password_generator-shortcut">error</span>
+                    <span data-i18n="contextMenuFillUsernameAndPassword"></span>: <span id="fill_username_password-shortcut">not configured</span><br>
+                    <span data-i18n="contextMenuFillPassword"></span>: <span id="fill_password-shortcut">not configured</span><br>
+                    <!-- TOTP shortcut hidden: not supported by sysPass -->
+                    <span data-i18n="contextMenuShowPasswordGenerator"></span>: <span id="show_password_generator-shortcut">not configured</span>
                   </p>
                   <p>
                     <button class="btn btn-sm btn-success" id="configureCommands" type="button" data-i18n="[title]openNewTab">
@@ -239,17 +233,7 @@
                     </div>
                   </div>
 
-                  <!-- Credential sorting after fill for TOTP -->
-                  <div class="form-group col-sm-4 pb-1">
-                    <label for="afterFillSortingTotp" class="py-2" data-i18n="optionsFillSortPriorityTotp"></label>
-                    <select class="form-select form-select-sm col-md-2" id="afterFillSortingTotp" data-i18n="[title]optionsFillSortPriorityTotp">
-                      <option value="sortByMatchingCredentials" data-i18n="optionsFillSortByMatchingCredentials"></option>
-                      <option value="sortByRelevantEntry" data-i18n="optionsFillSortByRelevantEntry"></option>
-                    </select>
-                  </div>
-                  <div class="pb-1">
-                    <span class="form-text text-muted" data-i18n="optionsFillSortPriorityTotpHelpText"></span>
-                  </div>
+                  <!-- TOTP sorting: hidden, not supported by sysPass -->
 
                   <!-- Use Auto-Submit -->
                   <div class="form-group py-2 pb-1">
@@ -274,14 +258,7 @@
                     </div>
                   </div>
 
-                  <!-- Automatically fill single-credential TOTP fields -->
-                  <div class="form-group pb-1">
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" name="autoFillSingleTotp" id="autoFillSingleTotp" value="true">
-                      <label class="form-check-label" for="autoFillSingleTotp" data-i18n="optionsCheckboxAutoFillSingleTotp"></label>
-                      <div class="form-text" data-i18n="optionsAutoFillSingleTotpHelpText"></div>
-                    </div>
-                  </div>
+                  <!-- TOTP auto-fill: hidden, not supported by sysPass -->
 
                   <!-- Autofill HTTP Auth dialogs -->
                   <div class="form-group pb-1" id="autoFillHttpAuth">
@@ -363,106 +340,13 @@
                     <div class="form-text help-text" data-i18n="optionsRedirectAllowanceHelpText"></div>
                   </div>
 
-                  <!-- Default password manager -->
-                  <div class="form-group pb-1">
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" name="defaultPasswordManager" id="defaultPasswordManager" value="true" />
-                      <label class="form-check-label" for="defaultPasswordManager" data-i18n="optionsDefaultPasswordManager"></label>
-                      <div class="form-text" data-i18n="optionsDefaultPasswordManagerHelpText"></div>
-                    </div>
-                  </div>
+                  <!-- Default password manager: removed, requires privacy permission -->
                 </div>
               </div>
 
-              <!-- Passkeys -->
-              <div class="card my-4 shadow" id="passkeysOptionsCard">
-                <div class="card-header h6 rounded-0">
-                  <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-                  <span data-i18n="optionsPasskeysTitle"></span>
-                </div>
-                <div class="card-body">
-                  <!-- Enable Passkeys -->
-                  <div class="form-group pb-1">
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" name="passkeys" id="passkeys" value="true" />
-                      <label class="form-check-label" for="passkeys" data-i18n="optionsPasskeysEnable"></label>
-                      <div class="form-text help-text" data-i18n="optionsPasskeysEnableHelpText"></div>
-                    </div>
-                  </div>
+              <!-- KeePassXC Passkeys: hidden, not supported by sysPass -->
 
-                  <!-- Enable Passkeys fallback -->
-                  <div class="form-group pb-1">
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" name="passkeysFallback" id="passkeysFallback" value="true" />
-                      <label class="form-check-label" for="passkeysFallback" data-i18n="optionsPasskeysEnableFallback"></label>
-                      <div class="form-text help-text" data-i18n="optionsPasskeysEnableFallbackHelpText"></div>
-                    </div>
-                  </div>
-
-                  <!-- Default group for saving passkeys -->
-                  <div class="form-group pb-2" id="passkeysDefaultGroup">
-                    <label for="defaultPasskeyGroup" class="pb-2" data-i18n="optionsLabelDefaultPasskeyGroup"></label>
-                    <div class="input-group w-75">
-                      <input class="form-control form-control-sm" type="text" id="defaultPasskeyGroup" placeholder="sysPass-Browser Passkeys">
-                      <button class="btn btn-sm btn-primary" type="button" id="defaultPasskeyGroupButton">
-                        <i class="fa fa-save" aria-hidden="true"></i>
-                        <span data-i18n="optionsButtonSave"></span>
-                      </button>
-                      <button class="btn btn-sm btn-danger" type="button" id="defaultPasskeyGroupButtonReset">
-                        <i class="fa fa-remove" aria-hidden="true"></i>
-                        <span data-i18n="optionsButtonReset"></span>
-                      </button>
-                    </div>
-                    <div class="form-text help-text" data-i18n="optionsDefaultGroupHelpText"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Updates -->
-              <div class="card my-4 shadow">
-                <div class="card-header h6 rounded-0">
-                  <i class="fa fa-clock-o" aria-hidden="true"></i>
-                  <span data-i18n="optionsUpdatesTitle"></span>
-                </div>
-                <div class="card-body">
-                  <div class="help-block kphVersion">
-                    <p>
-                      <span data-i18n="optionsVersionInfoText"></span>
-                      <br>
-                      <span data-i18n="optionsVersionDownload" data-i18n-placeholder="<a target='_blank' href='https://keepassxc.org/'>https://keepassxc.org/</a>"></span>
-                    </p>
-                    <p>
-                      <span data-i18n="optionsVersionRunning" data-i18n-placeholder="<span class='yourVersion'></span>"></span>
-                    </p>
-                    <p>
-                      <span data-i18n="optionsLatestVersion" data-i18n-placeholder="<span class='latestVersion'></span>"></span>
-                    </p>
-                      <button class="btn btn-sm btn-success checkUpdateKeePassXC">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
-                        <span data-i18n="optionsButtonUpdate"></span>
-                      </button>
-                    <div class="mt-3">
-                      <div class="pb-1" data-i18n="optionsRadioText"></div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="checkUpdateThreeDays">
-                        <label class="form-check-label" for="checkUpdateThreeDays"><span data-i18n="optionsRadioThreeDays"></span></label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="checkUpdateOneWeek">
-                        <label class="form-check-label" for="checkUpdateOneWeek"><span data-i18n="optionsRadioWeek"></span></label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="checkUpdateOneMonth">
-                        <label class="form-check-label" for="checkUpdateOneMonth"><span data-i18n="optionsRadioMonth"></span></label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="checkUpdateKeePassXC" id="checkUpdateNever">
-                        <label class="form-check-label" for="checkUpdateNever"><span data-i18n="optionsRadioNever"></span></label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <!-- Updates section removed: sysPass-Browser does not check for KeePassXC updates -->
 
               <!-- Advanced settings -->
               <div class="card my-4 shadow">
@@ -487,10 +371,7 @@
                       <input class="form-check-input" type="checkbox" name="showGroupNameInAutocomplete" id="showGroupNameInAutocomplete" value="true">
                       <label class="form-check-label" for="showGroupNameInAutocomplete" data-i18n="optionsCheckboxShowGroupNameInAutocomplete"></label>
                       <div class="form-text" data-i18n="optionsShowGroupNameInAutocompleteHelpText"></div>
-                      <div class="alert alert-info mt-3 col-lg-9" role="alert" id="versionRequiredAlert">
-                        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                        <span data-i18n="optionsKeePassXCVersionRequired" data-i18n-placeholder="2.6.0"></span>
-                      </div>
+                      <!-- Version requirement alert removed: not applicable for sysPass -->
                     </div>
                   </div>
 
@@ -945,71 +826,68 @@
             <div class="tab d-none" id="tab-about">
               <h2 class="pb-3 mt-0" data-i18n="optionsAboutTab"></h2>
 
+              <div class="card my-4 shadow border-primary">
+                <div class="card-header h6 rounded-0">
+                  <i class="fa fa-lock" aria-hidden="true"></i>
+                  sysPass-Browser
+                </div>
+                <div class="card-body">
+                  <div class="alert alert-warning">
+                    <strong>This is sysPass-Browser</strong>, a third-party adaptation of keepassxc-browser for use with sysPass.
+                    This is <strong>not</strong> keepassxc-browser. <strong>Do not</strong> report issues with this extension to the KeePassXC team.
+                  </div>
+                  <p>
+                    sysPass-Browser version: <span class="versionCIP"></span>
+                  </p>
+                  <p>
+                    <a target="_blank" href="https://github.com/miyoyo/syspass-browser">sysPass-Browser on GitHub</a>
+                  </p>
+                  <hr class="mt-0">
+                  <p>
+                    sysPass-Browser adaptation by:
+                    <br><a target="_blank" href="https://github.com/miyoyo">miyoyo</a>
+                  </p>
+                </div>
+              </div>
+
               <div class="card my-4 shadow">
                 <div class="card-header h6 rounded-0">
                   <i class="fa fa-desktop" aria-hidden="true"></i>
-                  <span data-i18n="optionsExtensionTitle"></span>
+                  keepassxc-browser (upstream)
                 </div>
                 <div class="card-body">
-                  <p>
-                    <span data-i18n="optionsAboutExtensionVersion" data-i18n-placeholder="<span class='versionCIP'></span>"></span>
-                    <br>
-                    <span data-i18n="optionsAboutKeePassXCVersion" data-i18n-placeholder="<span class='versionKPH'></span>"></span>
+                  <p class="text-muted">
+                    sysPass-Browser is built on top of keepassxc-browser. The original authors and contributors are listed below.
+                    Please do not contact them for support with sysPass-Browser.
                   </p>
                   <hr class="mt-0">
                   <p>
-                    <a target="_blank" href="https://chromewebstore.google.com/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk" data-i18n="[title]openNewTab">
-                      <span data-i18n="optionsAboutChrome"></span>
-                    </a>
-                    <br>
-                    <a target="_blank" href="https://addons.mozilla.org/en-US/firefox/addon/keepassxc-browser/" data-i18n="[title]openNewTab">
-                      <span data-i18n="optionsAboutMozilla"></span>
-                    </a>
-                    <br>
-                    <a target="_blank" href="https://microsoftedge.microsoft.com/addons/detail/keepassxcbrowser/pdffhmdngciaglkoonimfcmckehcpafo" data-i18n="[title]openNewTab">
-                      <span data-i18n="optionsAboutEdge"></span>
-                    </a>
-                    <br>
-                    <a target="_blank" href="https://github.com/keepassxreboot/keepassxc-browser" data-i18n="[title]openNewTab">
-                      <span data-i18n="optionsAboutGitHub"></span>
-                    </a>
+                    <a target="_blank" href="https://github.com/keepassxreboot/keepassxc-browser">keepassxc-browser on GitHub</a>
                   </p>
                   <hr class="mt-0">
                   <p>
-                    <span data-i18n="optionsAboutContributors"></span>:
-                    <br><a target="_blank" href="https://github.com/varjolintu" data-i18n="[title]openNewTab">Sami Vänttinen</a>
-                    <br><a target="_blank" href="https://github.com/smorks" data-i18n="[title]openNewTab">Andy Brandt</a>
-                    <br><a target="_blank" href="https://github.com/pfn" data-i18n="[title]openNewTab">Perry Nguyen</a>
-                    <br><a target="_blank" href="http://lukas-schulze.de" data-i18n="[title]openNewTab">Lukas Schulze</a>
-                    <br><a target="_blank" href="https://github.com/stefansundin" data-i18n="[title]openNewTab">Stefan Sundin</a>
-                    <br><a target="_blank" href="https://github.com/dynobo" data-i18n="[title]openNewTab">dynobo</a>
+                    Contributors:
+                    <br><a target="_blank" href="https://github.com/varjolintu">Sami Vänttinen</a>
+                    <br><a target="_blank" href="https://github.com/smorks">Andy Brandt</a>
+                    <br><a target="_blank" href="https://github.com/pfn">Perry Nguyen</a>
+                    <br><a target="_blank" href="http://lukas-schulze.de">Lukas Schulze</a>
+                    <br><a target="_blank" href="https://github.com/stefansundin">Stefan Sundin</a>
+                    <br><a target="_blank" href="https://github.com/dynobo">dynobo</a>
                   </p>
-
-                  <details>
-                    <summary><span data-i18n="optionsAboutSupporters"></span></summary>
-                    <pre>
-                      Patreon Key supporters:
-
-                      Bart Libert
-                      David Walluscheck
-                      yuriyk
-                    </pre>
-                  </details>
                 </div>
               </div>
 
               <div class="card my-4 shadow">
                 <div class="card-header h6 rounded-0">
                   <i class="fa fa-bug" aria-hidden="true"></i>
-                  <span data-i18n="optionsAboutReportBugs"></span>
+                  Report Bugs
                 </div>
                 <div class="card-body">
                   <p>
-                    <a target="_blank" href="https://github.com/keepassxreboot/keepassxc-browser/issues/new"><span data-i18n="optionsAboutCreateNewIssue"></span></a>
-                    <br><span data-i18n="optionsAboutDebugInfo"></span>:
+                    <a target="_blank" href="https://github.com/miyoyo/syspass-browser/issues/new">Create a new issue on GitHub</a>
+                    <br>Debug info:
                   </p>
-                  <p id="versionInfo" class="float-left">KeePassXC - <span class="kpxcVersion"></span>
-                    <br>sysPass-Browser - <span class="kpxcbrVersion"></span>
+                  <p id="versionInfo" class="float-left">sysPass-Browser - <span class="kpxcbrVersion"></span>
                     <br>Operating system: <span class="kpxcbrOS"></span>
                     <br>Browser: <span class="kpxcbrBrowser"></span>
                   </p>

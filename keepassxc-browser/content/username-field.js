@@ -12,6 +12,26 @@ kpxcUsernameIcons.switchIcon = function(state) {
     kpxcUsernameIcons.icons.forEach(u => u.switchIcon(state));
 };
 
+kpxcUsernameIcons.setLoading = function(loading) {
+    for (const u of kpxcUsernameIcons.icons) {
+        if (!u.icon) {
+            continue;
+        }
+
+        if (loading) {
+            u._savedClasses = u.icon.className;
+            u.icon.className = 'kpxc kpxc-username-icon loading';
+            u.icon.title = 'Retrieving credentials...';
+        } else {
+            if (u._savedClasses) {
+                u.icon.className = u._savedClasses;
+                u._savedClasses = null;
+            }
+            u.switchIcon(kpxc.databaseState);
+        }
+    }
+};
+
 kpxcUsernameIcons.isValid = function(field) {
     if (!field
         || field.offsetWidth < MIN_INPUT_FIELD_OFFSET_WIDTH

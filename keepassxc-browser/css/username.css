@@ -49,3 +49,16 @@
     background: url('safari-web-extension://__MSG_@@extension_id__/icons/keepassxc.svg') right no-repeat;
     background-size: contain;
 }
+
+@keyframes kpxc-spin {
+    to { transform: rotate(360deg); }
+}
+
+.kpxc-username-icon.loading {
+    background: none !important;
+    border: 2px solid rgba(92, 107, 192, 0.3);
+    border-top-color: #5c6bc0;
+    border-radius: 50%;
+    animation: kpxc-spin 0.8s linear infinite;
+    box-sizing: border-box;
+}

@@ -38,6 +38,7 @@ kpxcEvent.showStatus = async function(tab, configured, internalPoll, forceShowDe
         iframeDetected: iframeDetected,
         identifier: keyId,
         keePassXCAvailable: keepass.isKeePassXCAvailable,
+        vaultLocked: syspassCrypto.isConfigured() && !syspassCrypto.isUnlocked(),
         showGettingStartedGuideAlert: page.settings.showGettingStartedGuideAlert,
         showTroubleshootingGuideAlert: page.settings.showTroubleshootingGuideAlert,
         usernameFieldDetected: usernameFieldDetected
@@ -52,6 +53,11 @@ kpxcEvent.onLoadSettings = async function() {
 };
 
 kpxcEvent.onLoadKeyRing = async function() {
+    // If passkey is configured, never load from plaintext storage
+    if (syspassCrypto.isConfigured()) {
+        return keepass.keyRing;
+    }
+
     const item = await browser.storage.local.get({ 'keyRing': {} }).catch((err) => {
         logError('kpxcEvent.onLoadKeyRing error: ' + err);
         return Promise.reject();
@@ -283,10 +289,23 @@ kpxcEvent.syspassEncryptKeyRing = async function(tab, args = []) {
 kpxcEvent.syspassSaveLockSettings = async function(tab, args = []) {
     const [ mode, timeout ] = args;
     await syspassCrypto.saveLockSettings(mode, timeout);
+
+    // Immediately start/restart the lock timer with the new settings
+    if (mode === 'timed' && timeout > 0 && keepass.isKeePassXCAvailable) {
+        syspassCrypto.startLockTimer(timeout * 60 * 1000);
+    } else {
+        // Clear any existing timer if switching to session mode
+        clearTimeout(syspassCrypto.lockTimer);
+        syspassCrypto.lockTimer = null;
+    }
 };
 
 kpxcEvent.syspassClearCrypto = async function() {
     await syspassCrypto.clear();
+};
+
+kpxcEvent.openUnlockPage = async function() {
+    await browser.tabs.create({ url: browser.runtime.getURL('popups/popup_unlock.html') });
 };
 
 // All methods named in this object have to be declared BEFORE this!
@@ -358,4 +377,5 @@ kpxcEvent.messageHandlers = {
     'syspass_encrypt_keyring': kpxcEvent.syspassEncryptKeyRing,
     'syspass_save_lock_settings': kpxcEvent.syspassSaveLockSettings,
     'syspass_clear_crypto': kpxcEvent.syspassClearCrypto,
+    'open_unlock_page': kpxcEvent.openUnlockPage,
 };

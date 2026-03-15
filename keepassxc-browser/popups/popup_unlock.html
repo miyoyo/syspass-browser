@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Unlock sysPass Vault</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/colors.css">
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="../bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../fonts/fork-awesome.min.css">
+    <script src="../common/browser-polyfill.min.js"></script>
+    <script src="../common/global.js"></script>
+    <script src="../common/global_ui.js"></script>
+    <script defer src="popup_unlock.js"></script>
+    <style>
+      body {
+        width: auto;
+        min-width: 420px;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 32px 24px;
+        text-align: center;
+        background-color: var(--kpxc-background-color) !important;
+        color: var(--kpxc-text-color) !important;
+        font-family: sans-serif;
+      }
+      .brand-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 16px;
+      }
+      .brand-icon img {
+        width: 100%;
+        height: 100%;
+      }
+      h4 {
+        color: #5c6bc0;
+        margin-bottom: 4px;
+      }
+      .subtitle {
+        color: #888;
+        font-size: 13px;
+        margin-bottom: 24px;
+      }
+      .unlock-card {
+        background: var(--kpxc-background-color, #fff);
+        border: 1px solid rgba(92, 107, 192, 0.2);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 16px;
+      }
+      .status { margin: 16px 0; color: #888; }
+      .spinner {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(92, 107, 192, 0.2);
+        border-top-color: #5c6bc0;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 12px;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .btn-unlock {
+        background: #5c6bc0;
+        border: none;
+        color: #fff;
+        padding: 10px 32px;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-unlock:hover { background: #3f51b5; }
+      .lock-icon {
+        font-size: 28px;
+        color: #5c6bc0;
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="brand-icon">
+        <img src="../icons/keepassxc.svg" alt="sysPass">
+      </div>
+      <h4>sysPass Browser</h4>
+      <div class="subtitle">Vault is locked</div>
+
+      <div class="unlock-card">
+        <div id="unlock-prompt">
+          <div class="lock-icon"><i class="fa fa-lock"></i></div>
+          <p>Authenticate with your passkey to unlock the vault.</p>
+          <button id="do-unlock" class="btn-unlock">
+            <i class="fa fa-key"></i> Unlock with Passkey
+          </button>
+        </div>
+        <div id="unlock-progress" style="display:none">
+          <div class="spinner"></div>
+          <p class="status">Waiting for passkey authentication...</p>
+        </div>
+        <div id="unlock-success" style="display:none">
+          <p class="text-success" style="font-size:18px"><i class="fa fa-check-circle"></i> Unlocked</p>
+          <p class="status">This tab will close automatically.</p>
+        </div>
+        <div id="unlock-error" style="display:none">
+          <p class="text-danger"><i class="fa fa-exclamation-circle"></i> <span id="error-text">Unlock failed.</span></p>
+          <button id="retry-unlock" class="btn-unlock" style="margin-top:12px">
+            <i class="fa fa-refresh"></i> Try Again
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

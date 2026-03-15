@@ -20,8 +20,11 @@ function statusResponse(r) {
     $('#lock-database-button').hide();
     $('#getting-started-guide').hide();
     $('#database-not-opened').hide();
+    $('#vault-locked').hide();
 
-    if (!r.keePassXCAvailable) {
+    if (r.vaultLocked) {
+        $('#vault-locked').show();
+    } else if (!r.keePassXCAvailable) {
         $('#error-message').textContent = r.error;
         $('#error-encountered').show();
 
@@ -105,61 +108,15 @@ const sendMessageToTab = async function(message) {
         reloadCount++;
     });
 
-    $('#reopen-database-button').addEventListener('click', async () => {
-        // Try passkey unlock
-        try {
-            const cryptoState = await browser.runtime.sendMessage({ action: 'syspass_get_crypto_state' });
+    const doPasskeyUnlock = function() {
+        // Open a dedicated unlock page in a tab so the WebAuthn dialog
+        // doesn't kill the popup by stealing focus.
+        browser.tabs.create({ url: browser.runtime.getURL('popups/popup_unlock.html') });
+        close();
+    };
 
-            if (cryptoState && cryptoState.credentialId && cryptoState.prfSalt) {
-                // Perform passkey authentication with PRF
-                const credentialId = base64ToArrayBufferPopup(cryptoState.credentialId);
-                const prfSalt = base64ToArrayBufferPopup(cryptoState.prfSalt);
-
-                const assertion = await navigator.credentials.get({
-                    publicKey: {
-                        challenge: crypto.getRandomValues(new Uint8Array(32)),
-                        allowCredentials: [{
-                            type: 'public-key',
-                            id: credentialId
-                        }],
-                        userVerification: 'required',
-                        extensions: {
-                            prf: {
-                                eval: {
-                                    first: new TextEncoder().encode('syspass-browser-prf-v1')
-                                }
-                            }
-                        }
-                    }
-                });
-
-                const prfResult = assertion?.getClientExtensionResults()?.prf;
-                if (prfResult?.results?.first) {
-                    const prfB64 = arrayBufferToBase64Popup(prfResult.results.first);
-                    const unlocked = await browser.runtime.sendMessage({
-                        action: 'syspass_unlock',
-                        args: [prfB64]
-                    });
-
-                    if (unlocked) {
-                        statusResponse(await browser.runtime.sendMessage({
-                            action: 'get_status',
-                            args: [false, false, true]
-                        }));
-                        return;
-                    }
-                }
-            }
-        } catch (err) {
-            console.log('Passkey unlock failed:', err);
-        }
-
-        // Fallback: try normal reconnect
-        statusResponse(await browser.runtime.sendMessage({
-            action: 'get_status',
-            args: [ false, true ]
-        }));
-    });
+    $('#unlock-vault-button').addEventListener('click', doPasskeyUnlock);
+    $('#reopen-database-button').addEventListener('click', doPasskeyUnlock);
 
     $('#redetect-fields-button').addEventListener('click', async () => {
         const res = await sendMessageToTab('redetect_fields');

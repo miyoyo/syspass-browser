@@ -2,15 +2,16 @@
 
 // Passkey-derived encryption for sysPass API credentials at rest.
 //
-// Uses WebAuthn PRF extension to derive a key that wraps the keyRing encryption key.
-// The actual WebAuthn operations happen in popup/options pages (which have DOM access),
-// not in the service worker. The derived key is sent to the service worker via messaging.
+// Architecture:
+// - The keyRing (containing the API password) is ONLY stored encrypted.
+// - Plaintext keyRing exists ONLY in memory while unlocked.
+// - On lock/timeout, memory is wiped. No plaintext persists anywhere.
+// - Unlock requires passkey authentication (WebAuthn PRF).
 
 const syspassCrypto = {};
 syspassCrypto.state = 'not_configured'; // 'not_configured' | 'locked' | 'unlocked'
 syspassCrypto.encryptionKey = null; // CryptoKey, in memory only when unlocked
 syspassCrypto.lockTimer = null;
-syspassCrypto.prfSupported = null; // null = unknown, true/false after check
 
 // Storage keys
 const STORAGE_ENCRYPTED_KEYRING = 'syspass_encrypted_keyring';
@@ -35,17 +36,31 @@ syspassCrypto.isConfigured = function() {
 };
 
 syspassCrypto.lock = function() {
+    // Wipe encryption key from memory
     syspassCrypto.encryptionKey = null;
     syspassCrypto.state = 'locked';
     clearTimeout(syspassCrypto.lockTimer);
     syspassCrypto.lockTimer = null;
+
+    // Wipe plaintext credentials from memory
+    keepass.keyRing = {};
+    keepass.isKeePassXCAvailable = false;
+    keepass.isConnected = false;
+    keepass.isDatabaseClosed = true;
+    keepass.associated.value = false;
+    keepass.associated.hash = null;
+    keepass.databaseHash = '';
+
+    page.clearAllLogins();
+    keepass.updatePopup();
+    keepass.updateDatabaseHashToContent();
 };
 
 // Called from popup/options page with the PRF-derived key material
 syspassCrypto.unlock = async function(prfOutput) {
     try {
         const stored = await browser.storage.local.get([
-            STORAGE_WRAPPED_KEY, STORAGE_KEY_IV,
+            STORAGE_WRAPPED_KEY,
             STORAGE_ENCRYPTED_KEYRING, STORAGE_KEYRING_IV,
             STORAGE_PRF_SALT, STORAGE_LOCK_MODE, STORAGE_LOCK_TIMEOUT
         ]);
@@ -80,7 +95,7 @@ syspassCrypto.unlock = async function(prfOutput) {
 
         const keyRing = JSON.parse(new TextDecoder().decode(decrypted));
 
-        // Restore state
+        // Restore state -- keyRing lives ONLY in memory
         syspassCrypto.encryptionKey = encryptionKey;
         syspassCrypto.state = 'unlocked';
         keepass.keyRing = keyRing;
@@ -102,7 +117,8 @@ syspassCrypto.unlock = async function(prfOutput) {
     }
 };
 
-// Encrypt and store the keyRing. Called during initial setup or when keyRing changes.
+// Encrypt and store the keyRing, then DELETE plaintext from storage.
+// Called during initial passkey setup from the options page.
 // prfOutput: ArrayBuffer from WebAuthn PRF extension
 // credentialId: ArrayBuffer of the credential ID used
 syspassCrypto.encryptAndStore = async function(prfOutput, credentialId, keyRing) {
@@ -137,7 +153,7 @@ syspassCrypto.encryptAndStore = async function(prfOutput, credentialId, keyRing)
             encoded
         );
 
-        // Store everything
+        // Store encrypted data and DELETE plaintext keyRing from storage
         await browser.storage.local.set({
             [STORAGE_ENCRYPTED_KEYRING]: bufferToBase64(encryptedKeyRing),
             [STORAGE_WRAPPED_KEY]: bufferToBase64(wrappedKey),
@@ -146,8 +162,17 @@ syspassCrypto.encryptAndStore = async function(prfOutput, credentialId, keyRing)
             [STORAGE_CREDENTIAL_ID]: bufferToBase64(credentialId),
         });
 
+        // Remove plaintext keyRing from storage -- this is the critical step
+        await browser.storage.local.remove('keyRing');
+
         syspassCrypto.encryptionKey = encryptionKey;
         syspassCrypto.state = 'unlocked';
+
+        // Start lock timer if timed mode was already configured
+        const lockSettings = await syspassCrypto.loadLockSettings();
+        if (lockSettings.mode === 'timed') {
+            syspassCrypto.startLockTimer(lockSettings.timeout * 60 * 1000);
+        }
 
         return true;
     } catch (err) {
@@ -176,6 +201,9 @@ syspassCrypto.reencryptKeyRing = async function(keyRing) {
             [STORAGE_KEYRING_IV]: bufferToBase64(keyRingIv),
         });
 
+        // Ensure no plaintext in storage
+        await browser.storage.local.remove('keyRing');
+
         return true;
     } catch (err) {
         logError(`syspassCrypto.reencryptKeyRing failed: ${err}`);
@@ -183,12 +211,19 @@ syspassCrypto.reencryptKeyRing = async function(keyRing) {
     }
 };
 
-// Save lock mode settings
+// Save lock mode settings and apply immediately if unlocked
 syspassCrypto.saveLockSettings = async function(mode, timeoutMinutes) {
     await browser.storage.local.set({
         [STORAGE_LOCK_MODE]: mode,
         [STORAGE_LOCK_TIMEOUT]: timeoutMinutes
     });
+
+    // Apply timer changes immediately for the current session
+    clearTimeout(syspassCrypto.lockTimer);
+    syspassCrypto.lockTimer = null;
+    if (mode === 'timed' && syspassCrypto.state === 'unlocked') {
+        syspassCrypto.startLockTimer(timeoutMinutes * 60 * 1000);
+    }
 };
 
 // Load lock mode settings
@@ -244,20 +279,19 @@ syspassCrypto.startLockTimer = function(timeoutMs) {
     clearTimeout(syspassCrypto.lockTimer);
     syspassCrypto.lockTimer = setTimeout(() => {
         syspassCrypto.lock();
-        keepass.isDatabaseClosed = true;
-        keepass.associated.value = false;
-        keepass.associated.hash = null;
-        keepass.updatePopup();
-        keepass.updateDatabaseHashToContent();
     }, timeoutMs);
 };
 
-// Check if encrypted keyring exists (to determine initial state)
+// Check if encrypted keyring exists (to determine initial state on startup)
 syspassCrypto.initialize = async function() {
     const stored = await browser.storage.local.get([ STORAGE_ENCRYPTED_KEYRING, STORAGE_CREDENTIAL_ID ]);
     if (stored[STORAGE_ENCRYPTED_KEYRING] && stored[STORAGE_CREDENTIAL_ID]) {
         syspassCrypto.state = 'locked';
         keepass.isDatabaseClosed = true;
+
+        // Ensure no plaintext keyRing lingers in storage
+        await browser.storage.local.remove('keyRing');
+        keepass.keyRing = {};
     } else {
         syspassCrypto.state = 'not_configured';
     }

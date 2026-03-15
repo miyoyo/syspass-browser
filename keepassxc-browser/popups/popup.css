@@ -24,7 +24,7 @@ code {
     animation: spin 2s linear infinite;
     border: 4px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 4px solid #28a745;
+    border-top: 4px solid #5c6bc0;
     float: left;
     height: 1.4em;
     margin-right: 1em;
@@ -123,6 +123,7 @@ code {
 #configured-and-associated,
 #error-encountered,
 #database-not-opened,
+#vault-locked,
 #username-field-detected,
 #update-available,
 #getting-started-guide,
