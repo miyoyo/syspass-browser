@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "Integracja KeePassXC z nowoczesnymi przeglądarkami internetowymi",
+        "message": "Integracja sysPass z nowoczesnymi przeglądarkami internetowymi",
         "description": "Name of the extension."
     },
     "addSitePreferenceButtonTitle": {
@@ -16,7 +16,7 @@
         "description": "Allow Cross-Origin iframes button title text."
     },
     "connectButtonTitle": {
-        "message": "Podłącz bieżącą, aktywną bazę danych do KeePassXC-Browser.",
+        "message": "Podłącz bieżącą, aktywną bazę danych do sysPass-Browser.",
         "description": "Connect button title text."
     },
     "copyDebugInfoButtonTitle": {
@@ -28,7 +28,7 @@
         "description": "Dismiss HTTP Auth button title text."
     },
     "reconnectButtonTitle": {
-        "message": "Podłącz ponownie bieżącą, aktywną bazę danych do KeePassXC-Browser.",
+        "message": "Podłącz ponownie bieżącą, aktywną bazę danych do sysPass-Browser.",
         "description": "Reconnect button title text."
     },
     "redetectButtonTitle": {
@@ -36,11 +36,11 @@
         "description": "Redetect login fields button title text."
     },
     "reloadButtonTitle": {
-        "message": "Ponownie ładuje rozszerzenie i ponownie podłącza się do KeePassXC.",
+        "message": "Ponownie ładuje rozszerzenie i ponownie podłącza się do sysPass.",
         "description": "Reload button title text."
     },
     "removeConnectedDatabaseButtonTitle": {
-        "message": "Usuń podłączoną bazę danych z KeePassXC-Browser.",
+        "message": "Usuń podłączoną bazę danych z sysPass-Browser.",
         "description": "Remove button title on Connected Databases tab."
     },
     "removeCustomLoginFieldsButtonTitle": {
@@ -116,20 +116,20 @@
         "description": "Cannot decrypt message."
     },
     "errorMessageTimeout": {
-        "message": "Nie można podłączyć się do KeePassXC. Sprawdź, czy integracja z przeglądarką jest włączona w ustawieniach KeePassXC.",
-        "description": "Cannot connect to KeePassXC. Check that browser integration is enabled in KeePassXC settings."
+        "message": "Nie można podłączyć się do sysPass. Sprawdź, czy integracja z przeglądarką jest włączona w ustawieniach sysPass.",
+        "description": "Cannot connect to sysPass. Check that browser integration is enabled in sysPass settings."
     },
     "errorMessageCanceled": {
         "message": "Czynność anulowana lub odrzucona.",
         "description": "Action canceled or denied."
     },
     "errorMessageEncrypt": {
-        "message": "Szyfrowanie wiadomości nie powiodło się. Czy KeePassXC jest uruchomiony?",
-        "description": "Message encryption failed. Is KeePassXC running?"
+        "message": "Szyfrowanie wiadomości nie powiodło się. Czy sysPass jest uruchomiony?",
+        "description": "Message encryption failed. Is sysPass running?"
     },
     "errorMessageAssociate": {
-        "message": "Skojarzenie KeePassXC nie powiodło się, spróbuj ponownie.",
-        "description": "KeePassXC association failed, try again."
+        "message": "Skojarzenie sysPass nie powiodło się, spróbuj ponownie.",
+        "description": "sysPass association failed, try again."
     },
     "errorMessageKeyExchange": {
         "message": "Wymiana klucza nie powiodła się.",
@@ -240,8 +240,8 @@
         "description": "Context is not secure."
     },
     "errorNotConnected": {
-        "message": "Brak podłączenia do KeePassXC.",
-        "description": "Error notification shown when not connected to KeePassXC."
+        "message": "Brak podłączenia do sysPass.",
+        "description": "Error notification shown when not connected to sysPass."
     },
     "errorCurrentDatabaseNotConnected": {
         "message": "Bieżąca baza danych nie jest podłączona.",
@@ -264,10 +264,10 @@
         "description": "Password icon title text."
     },
     "passwordGeneratorNotSupported": {
-        "message": "Uruchamianie generatora haseł nie jest obsługiwane w tej wersji KeePassXC. Zaktualizuj KeePassXC do nowszej wersji."
+        "message": "Uruchamianie generatora haseł nie jest obsługiwane w tej wersji sysPass. Zaktualizuj sysPass do nowszej wersji."
     },
     "usernameFieldText": {
-        "message": "Wypełnij dane uwierzytelniające z KeePassXC.",
+        "message": "Wypełnij dane uwierzytelniające z sysPass.",
         "description": "Username field icon hover text."
     },
     "usernameFieldTextNoCredentials": {
@@ -279,15 +279,15 @@
         "description": "Username field icon hover text when database is locked."
     },
     "usernameDisconnectedFieldText": {
-        "message": "KeePassXC jest odłączony.",
-        "description": "Username field icon hover text when KeePassXC is disconnected."
+        "message": "sysPass jest odłączony.",
+        "description": "Username field icon hover text when sysPass is disconnected."
     },
     "totp": {
         "message": "TOTP",
         "description": "TOTP text."
     },
     "totpFieldText": {
-        "message": "Wypełnij TOTP z KeePassXC",
+        "message": "Wypełnij TOTP z sysPass",
         "description": "OTP field icon hover text."
     },
     "defineClose": {
@@ -387,11 +387,11 @@
         "description": "Alert message when filling credentials is blocked due to iframe restrictions."
     },
     "credentialsMultipleFound": {
-        "message": "Znaleziono więcej niż jedne dane logowania w KeePassXC!",
+        "message": "Znaleziono więcej niż jedne dane logowania w sysPass!",
         "description": "Alert message when trying to fill username and/or password when multiple credentials are found."
     },
     "credentialsMultipleFoundSecondLine": {
-        "message": "Kliknij ikonę KeePassXC-Browser, aby uzyskać więcej opcji.",
+        "message": "Kliknij ikonę sysPass-Browser, aby uzyskać więcej opcji.",
         "description": "Alert message when trying to fill username and/or password when multiple credentials are found."
     },
     "credentialsNoUsernameFound": {
@@ -427,7 +427,7 @@
         "description": "Message shown when trying to save credentials that haven't changed."
     },
     "popupTitle": {
-        "message": "KeePassXC – Wyskakujące okienko",
+        "message": "sysPass – Wyskakujące okienko",
         "description": "Popup window title."
     },
     "popupSettingsText": {
@@ -467,16 +467,16 @@
         "description": "Button text for allowing Cross-Origin iframes option."
     },
     "popupErrorEncountered": {
-        "message": "KeePassXC-Browser napotkał błąd:",
+        "message": "sysPass-Browser napotkał błąd:",
         "description": "A text shown above error message in the popup."
     },
     "popupUpdateAvailable": {
-        "message": "Używasz starej wersji KeePassXC.",
-        "description": "Popup warning message about old version of KeePassXC."
+        "message": "Używasz starej wersji sysPass.",
+        "description": "Popup warning message about old version of sysPass."
     },
     "popupDownloadNewVersion": {
         "message": "Pobierz najnowszą wersję z keepassxc.org",
-        "description": "Popup warning message link when KeePassXC version is not up-to-date."
+        "description": "Popup warning message link when sysPass version is not up-to-date."
     },
     "popupGettingStartedText": {
         "message": "Czy używasz tego programu po raz pierwszy? Zapoznaj się z naszym przewodnikiem dla początkujących.",
@@ -491,7 +491,7 @@
         "description": "Hide alert close button title."
     },
     "popupTroubleshootingText": {
-        "message": "Nie można podłączyć się do KeePassXC? Może nasza strona wiki będzie w stanie pomóc.",
+        "message": "Nie można podłączyć się do sysPass? Może nasza strona wiki będzie w stanie pomóc.",
         "description": "Popup information message about Troubleshooting Guide."
     },
     "popupTroubleshootingLinkText": {
@@ -503,24 +503,24 @@
         "description": "Checking status message in popup."
     },
     "popupNotConfigured": {
-        "message": "KeePassXC-Browser nie został skonfigurowany. Kliknij przycisk podłączenia, aby sparować z KeePassXC.",
-        "description": "A popup message shown when the extension has not been connected to KeePassXC."
+        "message": "sysPass-Browser nie został skonfigurowany. Kliknij przycisk podłączenia, aby sparować z sysPass.",
+        "description": "A popup message shown when the extension has not been connected to sysPass."
     },
     "popupNeedReconfigure": {
-        "message": "KeePassXC-Browser został odłączony od KeePassXC.",
-        "description": "A popup message shown when the extension has been disconnected from KeePassXC."
+        "message": "sysPass-Browser został odłączony od sysPass.",
+        "description": "A popup message shown when the extension has been disconnected from sysPass."
     },
     "popupNeedReconfigureMessage": {
         "message": "Kliknij przycisk ponownego podłączenia, aby ustanowić nowe połączenie.",
         "description": "A popup message shown when reconnect is needed."
     },
     "popupConfiguredNotAssociated": {
-        "message": "KeePassXC-Browser jeszcze nie podłączył się do KeePassXC, ale został skonfigurowany przy użyciu identyfikatora: $1",
-        "description": "A popup message shown when KeePassXC is not connected but configured."
+        "message": "sysPass-Browser jeszcze nie podłączył się do sysPass, ale został skonfigurowany przy użyciu identyfikatora: $1",
+        "description": "A popup message shown when sysPass is not connected but configured."
     },
     "popupConfiguredAndAssociated": {
-        "message": "KeePassXC-Browser jest podłączony do KeePassXC i został skonfigurowany przy użyciu następującego identyfikatora: $1",
-        "description": "A popup message when a connection to KeePassXC is successful."
+        "message": "sysPass-Browser jest podłączony do sysPass i został skonfigurowany przy użyciu następującego identyfikatora: $1",
+        "description": "A popup message when a connection to sysPass is successful."
     },
     "popupUsernameFieldDetected": {
         "message": "Wykryto tylko jedno pole nazwy użytkownika. Dodać adres URL do Ustawień witryn z włączoną opcją Tylko nazwa użytkownika?",
@@ -651,11 +651,11 @@
         "description": "Default settings title for Getting Started page."
     },
     "optionsWelcomeTitle": {
-        "message": "KeePassXC-Browser",
+        "message": "sysPass-Browser",
         "description": "Main card title for Getting Started page."
     },
     "optionsTitle": {
-        "message": "Ustawienia | KeePassXC-Browser",
+        "message": "Ustawienia | sysPass-Browser",
         "description": "Options page title."
     },
     "optionsGeneralSettingsTab": {
@@ -799,7 +799,7 @@
         "description": "Automatically retrieve credentials checkbox text."
     },
     "optionsCheckboxAutomaticReconnect": {
-        "message": "Automatycznie podłącz ponownie do KeePassXC",
+        "message": "Automatycznie podłącz ponownie do sysPass",
         "description": "Auto-reconnect checkbox text."
     },
     "optionsAutomaticReconnectWarning": {
@@ -859,7 +859,7 @@
         "description": "Default password manager checkbox text."
     },
     "optionsDefaultPasswordManagerHelpText": {
-        "message": "Ustawia KeePassXC-Browser jako domyślny menedżer haseł w przeglądarce.",
+        "message": "Ustawia sysPass-Browser jako domyślny menedżer haseł w przeglądarce.",
         "description": "Default password manager help text."
     },
     "optionsRedirectAllowance": {
@@ -883,7 +883,7 @@
         "description": "Debug logging help text."
     },
     "optionsRadioText": {
-        "message": "Sprawdź dostępność aktualizacji KeePassXC:",
+        "message": "Sprawdź dostępność aktualizacji sysPass:",
         "description": "Text above radio buttons in the settings page."
     },
     "optionsRadioThreeDays": {
@@ -935,7 +935,7 @@
         "description": "Password Generator option help text."
     },
     "optionsUsePasswordGeneratorHelpTextSecond": {
-        "message": "Hasła są generowane przez KeePassXC przy użyciu profilu generowania haseł.",
+        "message": "Hasła są generowane przez sysPass przy użyciu profilu generowania haseł.",
         "description": "Password Generator option help text, second part."
     },
     "optionsPredefinedSiteList": {
@@ -963,15 +963,15 @@
         "description": "Hide icons alert text text."
     },
     "optionsAutoRetrieveCredentialsHelpText": {
-        "message": "KeePassXC-Browser natychmiast pobierze dane uwierzytelniające po aktywowaniu karty.",
+        "message": "sysPass-Browser natychmiast pobierze dane uwierzytelniające po aktywowaniu karty.",
         "description": "Auto-Retrive Credentials option help text."
     },
     "optionsAutomaticReconnectHelpText": {
-        "message": "Po ponownym wykryciu automatycznie podłącza się ponownie do KeePassXC.",
+        "message": "Po ponownym wykryciu automatycznie podłącza się ponownie do sysPass.",
         "description": "Auto-reconnect option help text."
     },
     "optionsAutoFillSingleEntryHelpText": {
-        "message": "Pozwól KeePassXC-Browser automatycznie wypełnić dane uwierzytelniające, jeśli otrzyma tylko jeden wpis.",
+        "message": "Pozwól sysPass-Browser automatycznie wypełnić dane uwierzytelniające, jeśli otrzyma tylko jeden wpis.",
         "description": "Auto-Fill Single Entry option help text."
     },
     "optionsAutoFillRelevantCredentialHelpText": {
@@ -979,11 +979,11 @@
         "description": "Auto-Fill Relevant Credential option help text."
     },
     "optionsAutoFillSingleEntryWarning": {
-        "message": "Ostrzeżenie! Korzystanie z automatycznego wypełniania nie jest bezpieczne. Używaj na własne ryzyko. KeePassXC‑Browser automatycznie próbuje wykryć pola logowania. Mogą jednak zostać nieprawidłowo wykryte, prawdopodobnie wypełniając poufne dane w niebezpiecznych polach wejściowych.",
+        "message": "Ostrzeżenie! Korzystanie z automatycznego wypełniania nie jest bezpieczne. Używaj na własne ryzyko. sysPass‑Browser automatycznie próbuje wykryć pola logowania. Mogą jednak zostać nieprawidłowo wykryte, prawdopodobnie wypełniając poufne dane w niebezpiecznych polach wejściowych.",
         "description": "Auto-Fill Single Entry warning text."
     },
     "optionsAutoFillSingleTotpHelpText": {
-        "message": "Pozwól KeePassXC-Browser automatycznie wypełnić pola TOTP, jeśli otrzyma tylko jeden wpis.",
+        "message": "Pozwól sysPass-Browser automatycznie wypełnić pola TOTP, jeśli otrzyma tylko jeden wpis.",
         "description": "Auto-Fill Single TOTP field option help text."
     },
     "optionsAutocompleteUsernamesHelpText": {
@@ -1023,7 +1023,7 @@
         "description": "Download favicon after save help text."
     },
     "optionsAutoFillAndSendHelpText": {
-        "message": "Jeśli znaleziono dane uwierzytelniające dla strony, a typem logowania jest żądanie podstawowego uwierzytelniania HTTP, KeePassXC-Browser spróbuje zalogować się automatycznie przy użyciu pierwszych podanych danych uwierzytelniających. Gdy występuje wiele danych uwierzytelniających, może być użyte wyskakujące okno rozszerzenia, aby wybrać odpowiednie dane. Nawet gdy ta funkcja jest włączona, nadal można zalogować się ręcznie przy użyciu podstawowego uwierzytelniania HTTP.",
+        "message": "Jeśli znaleziono dane uwierzytelniające dla strony, a typem logowania jest żądanie podstawowego uwierzytelniania HTTP, sysPass-Browser spróbuje zalogować się automatycznie przy użyciu pierwszych podanych danych uwierzytelniających. Gdy występuje wiele danych uwierzytelniających, może być użyte wyskakujące okno rozszerzenia, aby wybrać odpowiednie dane. Nawet gdy ta funkcja jest włączona, nadal można zalogować się ręcznie przy użyciu podstawowego uwierzytelniania HTTP.",
         "description": "Auto-Fill And Send option help text."
     },
     "optionsAutoFillAndSendHelpTextSecond": {
@@ -1039,7 +1039,7 @@
         "description": "Clear credentials timeout help text."
     },
     "optionsVersionInfoText": {
-        "message": "KeePassXC-Browser potrzebuje KeePassXC do pobierania danych uwierzytelniających.",
+        "message": "sysPass-Browser potrzebuje sysPass do pobierania danych uwierzytelniających.",
         "description": "Settings page version info text."
     },
     "optionsVersionDownload": {
@@ -1047,20 +1047,20 @@
         "description": "Settings page download link."
     },
     "optionsVersionRunning": {
-        "message": "Używasz KeePassXC w wersji: $1",
-        "description": "Settings page info text of user's KeePassXC version."
+        "message": "Używasz sysPass w wersji: $1",
+        "description": "Settings page info text of user's sysPass version."
     },
     "optionsLatestVersion": {
-        "message": "Najnowsza dostępna wersja KeePassXC: $1",
-        "description": "Settings page info text about the latest KeePassXC version."
+        "message": "Najnowsza dostępna wersja sysPass: $1",
+        "description": "Settings page info text about the latest sysPass version."
     },
-    "optionsKeePassXCVersionRequired": {
-        "message": "Wymaga KeePassXC w wersji: $1",
-        "description": "KeePassXC version requirement text."
+    "optionssysPassVersionRequired": {
+        "message": "Wymaga sysPass w wersji: $1",
+        "description": "sysPass version requirement text."
     },
-    "optionsMinimumKeePassXCVersionRequired": {
-        "message": "Rozszerzenie wymaga KeePassXC w wersji $1. Starsze wersje mogą powodować niepożądane zachowania.",
-        "description": "KeePassXC minimum version requirement text."
+    "optionsMinimumsysPassVersionRequired": {
+        "message": "Rozszerzenie wymaga sysPass w wersji $1. Starsze wersje mogą powodować niepożądane zachowania.",
+        "description": "sysPass minimum version requirement text."
     },
     "optionsDefault": {
         "message": "Domyślne: $1",
@@ -1103,7 +1103,7 @@
         "description": "Reset all settings dialog text."
     },
     "optionsConnectedDatabasesText": {
-        "message": "Bazy danych podłączone do KeePassXC-Browser.",
+        "message": "Bazy danych podłączone do sysPass-Browser.",
         "description": "Info text about connected databases."
     },
     "optionsConnectedDatabasesNotFound": {
@@ -1235,11 +1235,11 @@
         "description": "Table caption of Custom Login Fields page."
     },
     "optionsCustomFieldsTabHelpTextFirst": {
-        "message": "Jeśli KeePassXC-Browser wykryje niewłaściwe pola logowania, możesz samodzielnie określić poprawne pola.",
+        "message": "Jeśli sysPass-Browser wykryje niewłaściwe pola logowania, możesz samodzielnie określić poprawne pola.",
         "description": "Saved Custom Login Fields info text, first part."
     },
     "optionsCustomFieldsTabHelpTextSecond": {
-        "message": "Przejdź do strony i kliknij ikonę KeePassXC-Browser, a następnie wybierz ",
+        "message": "Przejdź do strony i kliknij ikonę sysPass-Browser, a następnie wybierz ",
         "description": "Saved Custom Login Fields info text, second part."
     },
     "optionsCustomFieldsTabHelpTextThird": {
@@ -1255,7 +1255,7 @@
         "description": "Confirmation text when removing saved Custom Login Fields."
     },
     "optionsCustomFieldsConfirmationHelpText": {
-        "message": "KeePassXC-Browser automatycznie wykryje pola logowania przy następnej wizycie na tej stronie.",
+        "message": "sysPass-Browser automatycznie wykryje pola logowania przy następnej wizycie na tej stronie.",
         "description": "Part of confirmation text when removing saved Custom Login Fields."
     },
     "optionsSitePreferencesNotFound": {
@@ -1279,7 +1279,7 @@
         "description": "Site Preferences info text, third part."
     },
     "optionsSitePreferencesTabHelpTextFourth": {
-        "message": "Wykrywanie tylko nazwy użytkownika pozwala KeePassXC-Browser na wpełnienie danych logowania w witrynach internetowych z osobnymi stronami dla nazwy użytkownika i hasła.",
+        "message": "Wykrywanie tylko nazwy użytkownika pozwala sysPass-Browser na wpełnienie danych logowania w witrynach internetowych z osobnymi stronami dla nazwy użytkownika i hasła.",
         "description": "Site Preferences info text, fourth part."
     },
     "optionsSitePreferencesImprovedInputFieldDetectionHelpText": {
@@ -1303,7 +1303,7 @@
         "description": "Confirmation text when removing site from Site Preferences."
     },
     "optionsSitePreferencesConfirmationHelpText": {
-        "message": "KeePassXC-Browser włączy wszystkie funkcje dla tej witryny i usunie wykrywanie tylko nazwy użytkownika.",
+        "message": "sysPass-Browser włączy wszystkie funkcje dla tej witryny i usunie wykrywanie tylko nazwy użytkownika.",
         "description": "Part of confirmation text when removing Site Preferences."
     },
     "optionsSitePreferencesTableCaption": {
@@ -1315,28 +1315,28 @@
         "description": "Title text of select element in Site Preferences."
     },
     "optionsAboutChrome": {
-        "message": "Odwiedź KeePassXC-Browser w Chrome Web Store.",
+        "message": "Odwiedź sysPass-Browser w Chrome Web Store.",
         "description": "About page link to Chrome Web Store."
     },
     "optionsAboutMozilla": {
-        "message": "Odwiedź KeePassXC-Browser w katalogu Dodatki do Firefoksa.",
+        "message": "Odwiedź sysPass-Browser w katalogu Dodatki do Firefoksa.",
         "description": "About page link to AMO."
     },
     "optionsAboutEdge": {
-        "message": "Odwiedź KeePassXC-Browser na stronie Dodatki programu Edge.",
+        "message": "Odwiedź sysPass-Browser na stronie Dodatki programu Edge.",
         "description": "About page link to Edge Add-ons page."
     },
     "optionsAboutGitHub": {
-        "message": "Odwiedź KeePassXC-Browser na GitHubie.",
+        "message": "Odwiedź sysPass-Browser na GitHubie.",
         "description": "About page link to GitHub."
     },
     "optionsAboutExtensionVersion": {
-        "message": "Wersja KeePassXC-Browser: $1",
+        "message": "Wersja sysPass-Browser: $1",
         "description": "About page text of extension version."
     },
-    "optionsAboutKeePassXCVersion": {
-        "message": "Wersja KeePassXC: $1",
-        "description": "About page text of KeePassXC version."
+    "optionsAboutsysPassVersion": {
+        "message": "Wersja sysPass: $1",
+        "description": "About page text of sysPass version."
     },
     "optionsAboutContributors": {
         "message": "Współtwórcy",
@@ -1415,7 +1415,7 @@
         "description": "Enabled passkeys fallback option text."
     },
     "optionsPasskeysEnableFallbackHelpText": {
-        "message": "Po włączeniu nieudane lub anulowane żądanie do KeePassXC spowoduje wygenerowanie wewnętrznego żądania kluczy dostępu przeglądarki. Jeśli ta opcja jest wyłączona, wymagane jest podłączenie się do KeePassXC, a anulowanie żądania nie powiedzie się. Wartość domyślna: włączone.",
+        "message": "Po włączeniu nieudane lub anulowane żądanie do sysPass spowoduje wygenerowanie wewnętrznego żądania kluczy dostępu przeglądarki. Jeśli ta opcja jest wyłączona, wymagane jest podłączenie się do sysPass, a anulowanie żądania nie powiedzie się. Wartość domyślna: włączone.",
         "description": "Passkeys fallback option help text."
     },
     "openNewTab": {
@@ -1435,7 +1435,7 @@
         "description": "Lock database button title text."
     },
     "welcomeText": {
-        "message": "Witaj w KeePassXC-Browser!",
+        "message": "Witaj w sysPass-Browser!",
         "description": "Main title of Getting Started page."
     },
     "documentationGettingStarted": {
@@ -1451,8 +1451,8 @@
         "description": "Troubleshooting Guide text."
     },
     "gettingStartedWelcomeText": {
-        "message": "Witaj w KeePassXC-Browser, oficjalnym rozszerzeniu przeglądarki dla KeePassXC.",
-        "description": "Welcome to KeePassXC-Browser, the official browser extension for KeePassXC."
+        "message": "Witaj w sysPass-Browser, oficjalnym rozszerzeniu przeglądarki dla sysPass.",
+        "description": "Welcome to sysPass-Browser, the official browser extension for sysPass."
     },
     "gettingStartedSecondWelcomeText": {
         "message": "Przejrzyj ustawienia domyślne i wybierz wszystkie preferowane opcje.",

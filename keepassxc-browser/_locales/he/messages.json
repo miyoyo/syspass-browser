@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "שילוב KeePassXC בדפדפני מרשתת חדישים",
+        "message": "שילוב sysPass בדפדפני מרשתת חדישים",
         "description": "Name of the extension."
     },
     "addSitePreferenceButtonTitle": {
@@ -16,7 +16,7 @@
         "description": "Allow Cross-Origin iframes button title text."
     },
     "connectButtonTitle": {
-        "message": "חבר את מסד הנתונים הפעיל הנוכחי לתוסף KeePassXC.",
+        "message": "חבר את מסד הנתונים הפעיל הנוכחי לתוסף sysPass.",
         "description": "Connect button title text."
     },
     "copyDebugInfoButtonTitle": {
@@ -28,7 +28,7 @@
         "description": "Dismiss HTTP Auth button title text."
     },
     "reconnectButtonTitle": {
-        "message": "חבר מחדש את מסד הנתונים הפעיל הנוכחי לתוסף KeePassXC.",
+        "message": "חבר מחדש את מסד הנתונים הפעיל הנוכחי לתוסף sysPass.",
         "description": "Reconnect button title text."
     },
     "redetectButtonTitle": {
@@ -36,11 +36,11 @@
         "description": "Redetect login fields button title text."
     },
     "reloadButtonTitle": {
-        "message": "טוען מחדש את התוסף ומתחבר מחדש ל- KeePassXC.",
+        "message": "טוען מחדש את התוסף ומתחבר מחדש ל- sysPass.",
         "description": "Reload button title text."
     },
     "removeConnectedDatabaseButtonTitle": {
-        "message": "הסרת מסדי נתונים מחוברים מתוסף KeePassXC.",
+        "message": "הסרת מסדי נתונים מחוברים מתוסף sysPass.",
         "description": "Remove button title on Connected Databases tab."
     },
     "removeCustomLoginFieldsButtonTitle": {
@@ -116,20 +116,20 @@
         "description": "Cannot decrypt message."
     },
     "errorMessageTimeout": {
-        "message": "לא ניתן להתחבר ל־KeePassXC. נא לבדוק ששלוב הדפדפן אופשר בהגדרות KeePassXC.",
-        "description": "Cannot connect to KeePassXC. Check that browser integration is enabled in KeePassXC settings."
+        "message": "לא ניתן להתחבר ל־sysPass. נא לבדוק ששלוב הדפדפן אופשר בהגדרות sysPass.",
+        "description": "Cannot connect to sysPass. Check that browser integration is enabled in sysPass settings."
     },
     "errorMessageCanceled": {
         "message": "הפעולה בוטלה או נדחתה.",
         "description": "Action canceled or denied."
     },
     "errorMessageEncrypt": {
-        "message": "הצפנת ההודעה כשלה. האם KeePassXC פועל?",
-        "description": "Message encryption failed. Is KeePassXC running?"
+        "message": "הצפנת ההודעה כשלה. האם sysPass פועל?",
+        "description": "Message encryption failed. Is sysPass running?"
     },
     "errorMessageAssociate": {
-        "message": "שיוך KeePassXC כשל, נא לנסות שוב.",
-        "description": "KeePassXC association failed, try again."
+        "message": "שיוך sysPass כשל, נא לנסות שוב.",
+        "description": "sysPass association failed, try again."
     },
     "errorMessageKeyExchange": {
         "message": "חילופי מפתחות לא צלחו.",
@@ -240,8 +240,8 @@
         "description": "Context is not secure."
     },
     "errorNotConnected": {
-        "message": "לא מחובר ל־KeePassXC.",
-        "description": "Error notification shown when not connected to KeePassXC."
+        "message": "לא מחובר ל־sysPass.",
+        "description": "Error notification shown when not connected to sysPass."
     },
     "errorCurrentDatabaseNotConnected": {
         "message": "מסד־נתונים נוכחי אינו מחובר.",
@@ -264,10 +264,10 @@
         "description": "Password icon title text."
     },
     "passwordGeneratorNotSupported": {
-        "message": "מחולל סיסמאות אינו נתמך בגרסת KeePassXC זו. שקול את עדכון KeePassXC לגרסה חדשה יותר."
+        "message": "מחולל סיסמאות אינו נתמך בגרסת sysPass זו. שקול את עדכון sysPass לגרסה חדשה יותר."
     },
     "usernameFieldText": {
-        "message": "מילוי נתוני־אמנה מ־KeePassXC",
+        "message": "מילוי נתוני־אמנה מ־sysPass",
         "description": "Username field icon hover text."
     },
     "usernameFieldTextNoCredentials": {
@@ -279,15 +279,15 @@
         "description": "Username field icon hover text when database is locked."
     },
     "usernameDisconnectedFieldText": {
-        "message": "KeePassXC מנותק.",
-        "description": "Username field icon hover text when KeePassXC is disconnected."
+        "message": "sysPass מנותק.",
+        "description": "Username field icon hover text when sysPass is disconnected."
     },
     "totp": {
         "message": "TOTP",
         "description": "TOTP text."
     },
     "totpFieldText": {
-        "message": "מילוי TOTP מ־KeePassXC",
+        "message": "מילוי TOTP מ־sysPass",
         "description": "OTP field icon hover text."
     },
     "defineClose": {
@@ -387,11 +387,11 @@
         "description": "Alert message when filling credentials is blocked due to iframe restrictions."
     },
     "credentialsMultipleFound": {
-        "message": "נמצאה יותר מהתחברות אחת ל־KeePassXC!",
+        "message": "נמצאה יותר מהתחברות אחת ל־sysPass!",
         "description": "Alert message when trying to fill username and/or password when multiple credentials are found."
     },
     "credentialsMultipleFoundSecondLine": {
-        "message": "הקשה על סמל דפדפן־KeePassXC לקבלת אפשרויות נוספות.",
+        "message": "הקשה על סמל דפדפן־sysPass לקבלת אפשרויות נוספות.",
         "description": "Alert message when trying to fill username and/or password when multiple credentials are found."
     },
     "credentialsNoUsernameFound": {
@@ -427,7 +427,7 @@
         "description": "Message shown when trying to save credentials that haven't changed."
     },
     "popupTitle": {
-        "message": "KeePassXC - צץ",
+        "message": "sysPass - צץ",
         "description": "Popup window title."
     },
     "popupSettingsText": {
@@ -467,16 +467,16 @@
         "description": "Button text for allowing Cross-Origin iframes option."
     },
     "popupErrorEncountered": {
-        "message": "דפדפן־KeePassXC נתקל בשגיאה:",
+        "message": "דפדפן־sysPass נתקל בשגיאה:",
         "description": "A text shown above error message in the popup."
     },
     "popupUpdateAvailable": {
-        "message": "זוהי גרסה ישנה של KeePassXC.",
-        "description": "Popup warning message about old version of KeePassXC."
+        "message": "זוהי גרסה ישנה של sysPass.",
+        "description": "Popup warning message about old version of sysPass."
     },
     "popupDownloadNewVersion": {
         "message": "נא הוריד את הגרסה העדכנית ביותר מ־keepassxc.org",
-        "description": "Popup warning message link when KeePassXC version is not up-to-date."
+        "description": "Popup warning message link when sysPass version is not up-to-date."
     },
     "popupGettingStartedText": {
         "message": "משתמשים בתכנה לראשונה? נא בדקו את מדריך 'מתחילים' שלנו.",
@@ -491,7 +491,7 @@
         "description": "Hide alert close button title."
     },
     "popupTroubleshootingText": {
-        "message": "לא ניתן להתחבר ל־KeePassXC? אולי עמוד הוויקי שלנו יכול לעזור.",
+        "message": "לא ניתן להתחבר ל־sysPass? אולי עמוד הוויקי שלנו יכול לעזור.",
         "description": "Popup information message about Troubleshooting Guide."
     },
     "popupTroubleshootingLinkText": {
@@ -503,24 +503,24 @@
         "description": "Checking status message in popup."
     },
     "popupNotConfigured": {
-        "message": "לא נקבעה תצורת דפדפן־KeePassXC. יש ללחוץ על לחצן החיבור כדי לצמד עם KeePassXC.",
-        "description": "A popup message shown when the extension has not been connected to KeePassXC."
+        "message": "לא נקבעה תצורת דפדפן־sysPass. יש ללחוץ על לחצן החיבור כדי לצמד עם sysPass.",
+        "description": "A popup message shown when the extension has not been connected to sysPass."
     },
     "popupNeedReconfigure": {
-        "message": "דפדפן־KeePassXC נותק מ־KeePassXC.",
-        "description": "A popup message shown when the extension has been disconnected from KeePassXC."
+        "message": "דפדפן־sysPass נותק מ־sysPass.",
+        "description": "A popup message shown when the extension has been disconnected from sysPass."
     },
     "popupNeedReconfigureMessage": {
         "message": "הקשה על לחצן 'חיבור מחדש' ליצירת חיבור חדש.",
         "description": "A popup message shown when reconnect is needed."
     },
     "popupConfiguredNotAssociated": {
-        "message": "דפדפן־KeePassXC עדיין לא מחובר ל־KeePassXC אבל הוגדר באמצעות המזהה: $1",
-        "description": "A popup message shown when KeePassXC is not connected but configured."
+        "message": "דפדפן־sysPass עדיין לא מחובר ל־sysPass אבל הוגדר באמצעות המזהה: $1",
+        "description": "A popup message shown when sysPass is not connected but configured."
     },
     "popupConfiguredAndAssociated": {
-        "message": "דפדפן־KeePassXC מחובר ל־KeePassXC והוא הוגדר באמצעות המזהה הבא: $1",
-        "description": "A popup message when a connection to KeePassXC is successful."
+        "message": "דפדפן־sysPass מחובר ל־sysPass והוא הוגדר באמצעות המזהה הבא: $1",
+        "description": "A popup message when a connection to sysPass is successful."
     },
     "popupUsernameFieldDetected": {
         "message": "זוהה שדה שם משתמש יחיד בלבד. האם להוסיף את מען ה־URL להעדפות האתר כאשר האפשרות שם משתמש בלבד זמינה?",
@@ -651,11 +651,11 @@
         "description": "Default settings title for Getting Started page."
     },
     "optionsWelcomeTitle": {
-        "message": "KeePassXC-Browser",
+        "message": "sysPass-Browser",
         "description": "Main card title for Getting Started page."
     },
     "optionsTitle": {
-        "message": "הגדרות | דפדפן־KeePassXC",
+        "message": "הגדרות | דפדפן־sysPass",
         "description": "Options page title."
     },
     "optionsGeneralSettingsTab": {
@@ -799,7 +799,7 @@
         "description": "Automatically retrieve credentials checkbox text."
     },
     "optionsCheckboxAutomaticReconnect": {
-        "message": "התחברות מחדש ל־KeePassXC באופן אוטומטי",
+        "message": "התחברות מחדש ל־sysPass באופן אוטומטי",
         "description": "Auto-reconnect checkbox text."
     },
     "optionsAutomaticReconnectWarning": {
@@ -859,7 +859,7 @@
         "description": "Default password manager checkbox text."
     },
     "optionsDefaultPasswordManagerHelpText": {
-        "message": "Sets KeePassXC-Browser as the default password manager for the browser.",
+        "message": "Sets sysPass-Browser as the default password manager for the browser.",
         "description": "Default password manager help text."
     },
     "optionsRedirectAllowance": {
@@ -883,7 +883,7 @@
         "description": "Debug logging help text."
     },
     "optionsRadioText": {
-        "message": "בדיקת זמינות עדכוני KeePassXC:",
+        "message": "בדיקת זמינות עדכוני sysPass:",
         "description": "Text above radio buttons in the settings page."
     },
     "optionsRadioThreeDays": {
@@ -935,7 +935,7 @@
         "description": "Password Generator option help text."
     },
     "optionsUsePasswordGeneratorHelpTextSecond": {
-        "message": "ססמאות מחוללות על־ידי KeePassXC באמצעות פרופיל יצירת הססמאות.",
+        "message": "ססמאות מחוללות על־ידי sysPass באמצעות פרופיל יצירת הססמאות.",
         "description": "Password Generator option help text, second part."
     },
     "optionsPredefinedSiteList": {
@@ -963,15 +963,15 @@
         "description": "Hide icons alert text text."
     },
     "optionsAutoRetrieveCredentialsHelpText": {
-        "message": "דפדפן־KeePassXC יאחזר נתוני־אמנה מיד כאשר כרטיסייה תשופעל.",
+        "message": "דפדפן־sysPass יאחזר נתוני־אמנה מיד כאשר כרטיסייה תשופעל.",
         "description": "Auto-Retrive Credentials option help text."
     },
     "optionsAutomaticReconnectHelpText": {
-        "message": "התחברות מחדשת אוטומטית ל־KeePassXC עם זיהויו.",
+        "message": "התחברות מחדשת אוטומטית ל־sysPass עם זיהויו.",
         "description": "Auto-reconnect option help text."
     },
     "optionsAutoFillSingleEntryHelpText": {
-        "message": "לאפשר לדפדפן־KeePassXC למלא נתוני־אמנה באופן אוטומטי בקבלת רק ערך יחיד.",
+        "message": "לאפשר לדפדפן־sysPass למלא נתוני־אמנה באופן אוטומטי בקבלת רק ערך יחיד.",
         "description": "Auto-Fill Single Entry option help text."
     },
     "optionsAutoFillRelevantCredentialHelpText": {
@@ -979,11 +979,11 @@
         "description": "Auto-Fill Relevant Credential option help text."
     },
     "optionsAutoFillSingleEntryWarning": {
-        "message": "אזהרה! השימוש באפשרות מילוי־אוטומטי אינה בטוחה. השימוש על אחריות המשתמש בלבד. KeePassXC-Browser מנסה לזהות באופן אוטומטי שדות התחברות. יחד עם זאת, שדות ההתחברות עלולות להיות מזוהות באופן שגוי, דבר שעשוי אולי לאכלס נתונים רגישים, בשדות קלט לא בטוחים.",
+        "message": "אזהרה! השימוש באפשרות מילוי־אוטומטי אינה בטוחה. השימוש על אחריות המשתמש בלבד. sysPass-Browser מנסה לזהות באופן אוטומטי שדות התחברות. יחד עם זאת, שדות ההתחברות עלולות להיות מזוהות באופן שגוי, דבר שעשוי אולי לאכלס נתונים רגישים, בשדות קלט לא בטוחים.",
         "description": "Auto-Fill Single Entry warning text."
     },
     "optionsAutoFillSingleTotpHelpText": {
-        "message": "אפשר לדפדפן־KeePassXC למלא אוטומטית שדות TOTP אם הוא מקבל רק רשומה בודדת.",
+        "message": "אפשר לדפדפן־sysPass למלא אוטומטית שדות TOTP אם הוא מקבל רק רשומה בודדת.",
         "description": "Auto-Fill Single TOTP field option help text."
     },
     "optionsAutocompleteUsernamesHelpText": {
@@ -1023,7 +1023,7 @@
         "description": "Download favicon after save help text."
     },
     "optionsAutoFillAndSendHelpText": {
-        "message": "אם נמצאו נתוני־אמנה עבור עמוד, וסוג ההתחברות הוא בקשת אימות בסיסית של HTTP, KeePassXCדפדפן־ מנסה להתחבר באופן אוטומטי עם נתוני־האמנה הראשונים שניתנו. כאשר קיימים נתוני־אמנה מרובים, ניתן להשתמש בהרחבה הצצה כדי לבחור את האישור הנכון. גם כאשר תכונה זו מופעלת, עדיין ניתן להזין התחברויות ל־HTTP Basic Auth באופן ידני.",
+        "message": "אם נמצאו נתוני־אמנה עבור עמוד, וסוג ההתחברות הוא בקשת אימות בסיסית של HTTP, sysPassדפדפן־ מנסה להתחבר באופן אוטומטי עם נתוני־האמנה הראשונים שניתנו. כאשר קיימים נתוני־אמנה מרובים, ניתן להשתמש בהרחבה הצצה כדי לבחור את האישור הנכון. גם כאשר תכונה זו מופעלת, עדיין ניתן להזין התחברויות ל־HTTP Basic Auth באופן ידני.",
         "description": "Auto-Fill And Send option help text."
     },
     "optionsAutoFillAndSendHelpTextSecond": {
@@ -1039,7 +1039,7 @@
         "description": "Clear credentials timeout help text."
     },
     "optionsVersionInfoText": {
-        "message": "דפדפן־KeePassXC צריך את KeePassXC כדי לאחזר נתוני־אמנה.",
+        "message": "דפדפן־sysPass צריך את sysPass כדי לאחזר נתוני־אמנה.",
         "description": "Settings page version info text."
     },
     "optionsVersionDownload": {
@@ -1047,20 +1047,20 @@
         "description": "Settings page download link."
     },
     "optionsVersionRunning": {
-        "message": "גרסת KeePassXC מותקנת: $1",
-        "description": "Settings page info text of user's KeePassXC version."
+        "message": "גרסת sysPass מותקנת: $1",
+        "description": "Settings page info text of user's sysPass version."
     },
     "optionsLatestVersion": {
-        "message": "הגרסת KeePassXC האחרונה הזמינה: $1",
-        "description": "Settings page info text about the latest KeePassXC version."
+        "message": "הגרסת sysPass האחרונה הזמינה: $1",
+        "description": "Settings page info text about the latest sysPass version."
     },
-    "optionsKeePassXCVersionRequired": {
-        "message": "נדרשת גרסת KeePassXC: $1",
-        "description": "KeePassXC version requirement text."
+    "optionssysPassVersionRequired": {
+        "message": "נדרשת גרסת sysPass: $1",
+        "description": "sysPass version requirement text."
     },
-    "optionsMinimumKeePassXCVersionRequired": {
-        "message": "The extension requires KeePassXC version: $1. Earlier versions can cause unwanted behavior.",
-        "description": "KeePassXC minimum version requirement text."
+    "optionsMinimumsysPassVersionRequired": {
+        "message": "The extension requires sysPass version: $1. Earlier versions can cause unwanted behavior.",
+        "description": "sysPass minimum version requirement text."
     },
     "optionsDefault": {
         "message": "ברירת מחדל: $1",
@@ -1103,7 +1103,7 @@
         "description": "Reset all settings dialog text."
     },
     "optionsConnectedDatabasesText": {
-        "message": "מסדי נתונים מחוברים לדפדפן־KeePassXC.",
+        "message": "מסדי נתונים מחוברים לדפדפן־sysPass.",
         "description": "Info text about connected databases."
     },
     "optionsConnectedDatabasesNotFound": {
@@ -1235,11 +1235,11 @@
         "description": "Table caption of Custom Login Fields page."
     },
     "optionsCustomFieldsTabHelpTextFirst": {
-        "message": "במידה שדפדפן־KeePassXC מזהה שדות התחברויות שגויים, ניתן להגדיר את השדות הנכונים ידנית.",
+        "message": "במידה שדפדפן־sysPass מזהה שדות התחברויות שגויים, ניתן להגדיר את השדות הנכונים ידנית.",
         "description": "Saved Custom Login Fields info text, first part."
     },
     "optionsCustomFieldsTabHelpTextSecond": {
-        "message": "נא לעבור לעמוד וללחץ על סמל דפדפן־KeePassXC, ולאחר מכן לבחור ",
+        "message": "נא לעבור לעמוד וללחץ על סמל דפדפן־sysPass, ולאחר מכן לבחור ",
         "description": "Saved Custom Login Fields info text, second part."
     },
     "optionsCustomFieldsTabHelpTextThird": {
@@ -1255,7 +1255,7 @@
         "description": "Confirmation text when removing saved Custom Login Fields."
     },
     "optionsCustomFieldsConfirmationHelpText": {
-        "message": "דפדפן־KeePassXC יזהה באופן אוטומטי את שדות ההתחברות בפעם הבאה שתבקרו בעמוד זה.",
+        "message": "דפדפן־sysPass יזהה באופן אוטומטי את שדות ההתחברות בפעם הבאה שתבקרו בעמוד זה.",
         "description": "Part of confirmation text when removing saved Custom Login Fields."
     },
     "optionsSitePreferencesNotFound": {
@@ -1279,7 +1279,7 @@
         "description": "Site Preferences info text, third part."
     },
     "optionsSitePreferencesTabHelpTextFourth": {
-        "message": "זיהוי שמות משתמשים בלבד מאפשר לדפדפן־KeePassXC למלא פרטי התחברות באתרי מרשתת עם עמודים נפרדים לשם משתמש וססמה.",
+        "message": "זיהוי שמות משתמשים בלבד מאפשר לדפדפן־sysPass למלא פרטי התחברות באתרי מרשתת עם עמודים נפרדים לשם משתמש וססמה.",
         "description": "Site Preferences info text, fourth part."
     },
     "optionsSitePreferencesImprovedInputFieldDetectionHelpText": {
@@ -1303,7 +1303,7 @@
         "description": "Confirmation text when removing site from Site Preferences."
     },
     "optionsSitePreferencesConfirmationHelpText": {
-        "message": "דפדפן־KeePassXC יאפשר את כל התכונות עבור אתר זה וזיהוי שם משתמש בלבד, יוסר.",
+        "message": "דפדפן־sysPass יאפשר את כל התכונות עבור אתר זה וזיהוי שם משתמש בלבד, יוסר.",
         "description": "Part of confirmation text when removing Site Preferences."
     },
     "optionsSitePreferencesTableCaption": {
@@ -1315,28 +1315,28 @@
         "description": "Title text of select element in Site Preferences."
     },
     "optionsAboutChrome": {
-        "message": "בקרו את דפדפן־KeePassXC בחנות המרשתת של Chrome.",
+        "message": "בקרו את דפדפן־sysPass בחנות המרשתת של Chrome.",
         "description": "About page link to Chrome Web Store."
     },
     "optionsAboutMozilla": {
-        "message": "בקרו את דפדפן־KeePassXC במחיצת התוספים של מוזילה.",
+        "message": "בקרו את דפדפן־sysPass במחיצת התוספים של מוזילה.",
         "description": "About page link to AMO."
     },
     "optionsAboutEdge": {
-        "message": "בקרו את דפדפן־KeePassXC במחיצת התוספים של אדג'.",
+        "message": "בקרו את דפדפן־sysPass במחיצת התוספים של אדג'.",
         "description": "About page link to Edge Add-ons page."
     },
     "optionsAboutGitHub": {
-        "message": "בקרו את דפדפן־KeePassXC ב־GitHub.",
+        "message": "בקרו את דפדפן־sysPass ב־GitHub.",
         "description": "About page link to GitHub."
     },
     "optionsAboutExtensionVersion": {
-        "message": "גרסת דפדפן־KeePassXC: $1",
+        "message": "גרסת דפדפן־sysPass: $1",
         "description": "About page text of extension version."
     },
-    "optionsAboutKeePassXCVersion": {
-        "message": "גרסת KeePassXC: $1",
-        "description": "About page text of KeePassXC version."
+    "optionsAboutsysPassVersion": {
+        "message": "גרסת sysPass: $1",
+        "description": "About page text of sysPass version."
     },
     "optionsAboutContributors": {
         "message": "תורמים",
@@ -1415,7 +1415,7 @@
         "description": "Enabled passkeys fallback option text."
     },
     "optionsPasskeysEnableFallbackHelpText": {
-        "message": "כאשר הגדרה זו מופעלת, בקשה שנכשלה או בוטלה ל- KeePassXC תפעיל את בקשת המפתחות הפנימיים של הדפדפן עצמו. אם מושבת, נדרש חיבור ל- KeePassXC והבקשה שבוטלה תיכשל. ברירת מחדל: מופעלת.",
+        "message": "כאשר הגדרה זו מופעלת, בקשה שנכשלה או בוטלה ל- sysPass תפעיל את בקשת המפתחות הפנימיים של הדפדפן עצמו. אם מושבת, נדרש חיבור ל- sysPass והבקשה שבוטלה תיכשל. ברירת מחדל: מופעלת.",
         "description": "Passkeys fallback option help text."
     },
     "openNewTab": {
@@ -1435,7 +1435,7 @@
         "description": "Lock database button title text."
     },
     "welcomeText": {
-        "message": "Welcome to KeePassXC-Browser!",
+        "message": "Welcome to sysPass-Browser!",
         "description": "Main title of Getting Started page."
     },
     "documentationGettingStarted": {
@@ -1451,8 +1451,8 @@
         "description": "Troubleshooting Guide text."
     },
     "gettingStartedWelcomeText": {
-        "message": "Welcome to KeePassXC-Browser, the official browser extension for KeePassXC.",
-        "description": "Welcome to KeePassXC-Browser, the official browser extension for KeePassXC."
+        "message": "Welcome to sysPass-Browser, the official browser extension for sysPass.",
+        "description": "Welcome to sysPass-Browser, the official browser extension for sysPass."
     },
     "gettingStartedSecondWelcomeText": {
         "message": "Please go through the default settings and check all your preferred options.",

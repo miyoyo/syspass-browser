@@ -1,6 +1,6 @@
 {
     "extensionDescription": {
-        "message": "KeePassXC 與現代瀏覽器的整合",
+        "message": "sysPass 與現代瀏覽器的整合",
         "description": "Name of the extension."
     },
     "addSitePreferenceButtonTitle": {
@@ -16,7 +16,7 @@
         "description": "Allow Cross-Origin iframes button title text."
     },
     "connectButtonTitle": {
-        "message": "將目前使用的資料庫連接到 KeePassXC-Browser。",
+        "message": "將目前使用的資料庫連接到 sysPass-Browser。",
         "description": "Connect button title text."
     },
     "copyDebugInfoButtonTitle": {
@@ -28,7 +28,7 @@
         "description": "Dismiss HTTP Auth button title text."
     },
     "reconnectButtonTitle": {
-        "message": "將目前使用的資料庫重新連接到 KeePassXC-Browser。",
+        "message": "將目前使用的資料庫重新連接到 sysPass-Browser。",
         "description": "Reconnect button title text."
     },
     "redetectButtonTitle": {
@@ -36,11 +36,11 @@
         "description": "Redetect login fields button title text."
     },
     "reloadButtonTitle": {
-        "message": "重新載入擴展程序並重新連接 KeePassXC。",
+        "message": "重新載入擴展程序並重新連接 sysPass。",
         "description": "Reload button title text."
     },
     "removeConnectedDatabaseButtonTitle": {
-        "message": "刪除 KeePassXC-Browser 已連接的資料庫。",
+        "message": "刪除 sysPass-Browser 已連接的資料庫。",
         "description": "Remove button title on Connected Databases tab."
     },
     "removeCustomLoginFieldsButtonTitle": {
@@ -116,20 +116,20 @@
         "description": "Cannot decrypt message."
     },
     "errorMessageTimeout": {
-        "message": "無法連接到 KeePassXC。請確認 KeePassXC 的瀏覽器整合功能已啟用。",
-        "description": "Cannot connect to KeePassXC. Check that browser integration is enabled in KeePassXC settings."
+        "message": "無法連接到 sysPass。請確認 sysPass 的瀏覽器整合功能已啟用。",
+        "description": "Cannot connect to sysPass. Check that browser integration is enabled in sysPass settings."
     },
     "errorMessageCanceled": {
         "message": "動作被取消或是被拒絕。",
         "description": "Action canceled or denied."
     },
     "errorMessageEncrypt": {
-        "message": "訊息加密失敗。KeePassXC 是否正在執行？",
-        "description": "Message encryption failed. Is KeePassXC running?"
+        "message": "訊息加密失敗。sysPass 是否正在執行？",
+        "description": "Message encryption failed. Is sysPass running?"
     },
     "errorMessageAssociate": {
-        "message": "KeePassXC 配對失敗，請再試一次。",
-        "description": "KeePassXC association failed, try again."
+        "message": "sysPass 配對失敗，請再試一次。",
+        "description": "sysPass association failed, try again."
     },
     "errorMessageKeyExchange": {
         "message": "金鑰交換失敗。",
@@ -240,8 +240,8 @@
         "description": "Context is not secure."
     },
     "errorNotConnected": {
-        "message": "未連接至 KeePassXC。",
-        "description": "Error notification shown when not connected to KeePassXC."
+        "message": "未連接至 sysPass。",
+        "description": "Error notification shown when not connected to sysPass."
     },
     "errorCurrentDatabaseNotConnected": {
         "message": "目前資料庫尚未連接。",
@@ -264,10 +264,10 @@
         "description": "Password icon title text."
     },
     "passwordGeneratorNotSupported": {
-        "message": "此版本 KeePassXC 不支援運行密碼生成器。請將 KeePassXC 更新到新版本。"
+        "message": "此版本 sysPass 不支援運行密碼生成器。請將 sysPass 更新到新版本。"
     },
     "usernameFieldText": {
-        "message": "從 KeePassXC 填入憑證。",
+        "message": "從 sysPass 填入憑證。",
         "description": "Username field icon hover text."
     },
     "usernameFieldTextNoCredentials": {
@@ -279,15 +279,15 @@
         "description": "Username field icon hover text when database is locked."
     },
     "usernameDisconnectedFieldText": {
-        "message": "KeePassXC 已斷開連接。",
-        "description": "Username field icon hover text when KeePassXC is disconnected."
+        "message": "sysPass 已斷開連接。",
+        "description": "Username field icon hover text when sysPass is disconnected."
     },
     "totp": {
         "message": "TOTP",
         "description": "TOTP text."
     },
     "totpFieldText": {
-        "message": "從 KeePassXC 填入限時單次密碼",
+        "message": "從 sysPass 填入限時單次密碼",
         "description": "OTP field icon hover text."
     },
     "defineClose": {
@@ -387,11 +387,11 @@
         "description": "Alert message when filling credentials is blocked due to iframe restrictions."
     },
     "credentialsMultipleFound": {
-        "message": "錯誤：\n在 KeePassXC 中找到多個登錄資訊！\n點選 KeePassXC-Browser 圖示來檢視更多選項。",
+        "message": "錯誤：\n在 sysPass 中找到多個登錄資訊！\n點選 sysPass-Browser 圖示來檢視更多選項。",
         "description": "Alert message when trying to fill username and/or password when multiple credentials are found."
     },
     "credentialsMultipleFoundSecondLine": {
-        "message": "點擊 KeePassXC-Browser 圖示展開更多選項。",
+        "message": "點擊 sysPass-Browser 圖示展開更多選項。",
         "description": "Alert message when trying to fill username and/or password when multiple credentials are found."
     },
     "credentialsNoUsernameFound": {
@@ -427,7 +427,7 @@
         "description": "Message shown when trying to save credentials that haven't changed."
     },
     "popupTitle": {
-        "message": "KeePassXC - 彈出視窗",
+        "message": "sysPass - 彈出視窗",
         "description": "Popup window title."
     },
     "popupSettingsText": {
@@ -467,16 +467,16 @@
         "description": "Button text for allowing Cross-Origin iframes option."
     },
     "popupErrorEncountered": {
-        "message": "KeePassXC-Browser 遇到錯誤：",
+        "message": "sysPass-Browser 遇到錯誤：",
         "description": "A text shown above error message in the popup."
     },
     "popupUpdateAvailable": {
-        "message": "您使用了舊版的 KeePassXC。",
-        "description": "Popup warning message about old version of KeePassXC."
+        "message": "您使用了舊版的 sysPass。",
+        "description": "Popup warning message about old version of sysPass."
     },
     "popupDownloadNewVersion": {
         "message": "請從 keepassxc.org 下載最新版本",
-        "description": "Popup warning message link when KeePassXC version is not up-to-date."
+        "description": "Popup warning message link when sysPass version is not up-to-date."
     },
     "popupGettingStartedText": {
         "message": "您是第一次使用嗎？請閱讀我們的新手指南。",
@@ -491,7 +491,7 @@
         "description": "Hide alert close button title."
     },
     "popupTroubleshootingText": {
-        "message": "無法連接至 KeePassXC？也許我們的 Wiki 頁面可以幫忙。",
+        "message": "無法連接至 sysPass？也許我們的 Wiki 頁面可以幫忙。",
         "description": "Popup information message about Troubleshooting Guide."
     },
     "popupTroubleshootingLinkText": {
@@ -503,24 +503,24 @@
         "description": "Checking status message in popup."
     },
     "popupNotConfigured": {
-        "message": "KeePassXC-Browser 尚未設置。點擊連接按鈕與 KeePassXC 配對。",
-        "description": "A popup message shown when the extension has not been connected to KeePassXC."
+        "message": "sysPass-Browser 尚未設置。點擊連接按鈕與 sysPass 配對。",
+        "description": "A popup message shown when the extension has not been connected to sysPass."
     },
     "popupNeedReconfigure": {
-        "message": "KeePassXC-Browser 已與 KeePassXC 斷開連接。",
-        "description": "A popup message shown when the extension has been disconnected from KeePassXC."
+        "message": "sysPass-Browser 已與 sysPass 斷開連接。",
+        "description": "A popup message shown when the extension has been disconnected from sysPass."
     },
     "popupNeedReconfigureMessage": {
         "message": "點擊重新連接按鈕建立新的連接。",
         "description": "A popup message shown when reconnect is needed."
     },
     "popupConfiguredNotAssociated": {
-        "message": "KeePassXC-Browser 尚未與 KeePassXC 連線，但是已經被設定為使用此識別碼：$1",
-        "description": "A popup message shown when KeePassXC is not connected but configured."
+        "message": "sysPass-Browser 尚未與 sysPass 連線，但是已經被設定為使用此識別碼：$1",
+        "description": "A popup message shown when sysPass is not connected but configured."
     },
     "popupConfiguredAndAssociated": {
-        "message": "KeePassXC-Browser 已與 KeePassXC 連線，且設定為使用此識別碼：$1",
-        "description": "A popup message when a connection to KeePassXC is successful."
+        "message": "sysPass-Browser 已與 sysPass 連線，且設定為使用此識別碼：$1",
+        "description": "A popup message when a connection to sysPass is successful."
     },
     "popupUsernameFieldDetected": {
         "message": "偵測到單獨的用戶名稱欄位。將網址加入至網站設定並啟用「僅用戶名稱」選項？",
@@ -651,11 +651,11 @@
         "description": "Default settings title for Getting Started page."
     },
     "optionsWelcomeTitle": {
-        "message": "KeePassXC-Browser",
+        "message": "sysPass-Browser",
         "description": "Main card title for Getting Started page."
     },
     "optionsTitle": {
-        "message": "設定 | KeePassXC-Browser",
+        "message": "設定 | sysPass-Browser",
         "description": "Options page title."
     },
     "optionsGeneralSettingsTab": {
@@ -799,7 +799,7 @@
         "description": "Automatically retrieve credentials checkbox text."
     },
     "optionsCheckboxAutomaticReconnect": {
-        "message": "自動重新連接至 KeePassXC",
+        "message": "自動重新連接至 sysPass",
         "description": "Auto-reconnect checkbox text."
     },
     "optionsAutomaticReconnectWarning": {
@@ -859,7 +859,7 @@
         "description": "Default password manager checkbox text."
     },
     "optionsDefaultPasswordManagerHelpText": {
-        "message": "將 KeePassXC-Browser 設定為瀏覽器的預設密碼管理員。",
+        "message": "將 sysPass-Browser 設定為瀏覽器的預設密碼管理員。",
         "description": "Default password manager help text."
     },
     "optionsRedirectAllowance": {
@@ -883,7 +883,7 @@
         "description": "Debug logging help text."
     },
     "optionsRadioText": {
-        "message": "檢查 KeePassXC 的更新：",
+        "message": "檢查 sysPass 的更新：",
         "description": "Text above radio buttons in the settings page."
     },
     "optionsRadioThreeDays": {
@@ -935,7 +935,7 @@
         "description": "Password Generator option help text."
     },
     "optionsUsePasswordGeneratorHelpTextSecond": {
-        "message": "KeePassXC 將參考您的密碼生成配置來產生密碼。",
+        "message": "sysPass 將參考您的密碼生成配置來產生密碼。",
         "description": "Password Generator option help text, second part."
     },
     "optionsPredefinedSiteList": {
@@ -963,15 +963,15 @@
         "description": "Hide icons alert text text."
     },
     "optionsAutoRetrieveCredentialsHelpText": {
-        "message": "KeePassXC-Browser 將在標籤頁激活時立即獲取憑證。 ",
+        "message": "sysPass-Browser 將在標籤頁激活時立即獲取憑證。 ",
         "description": "Auto-Retrive Credentials option help text."
     },
     "optionsAutomaticReconnectHelpText": {
-        "message": "當偵測到 KeePassXC 時自動重新連接。",
+        "message": "當偵測到 sysPass 時自動重新連接。",
         "description": "Auto-reconnect option help text."
     },
     "optionsAutoFillSingleEntryHelpText": {
-        "message": "若 KeePassXC-Browser 只接收到單一項目，將自動填入憑證。",
+        "message": "若 sysPass-Browser 只接收到單一項目，將自動填入憑證。",
         "description": "Auto-Fill Single Entry option help text."
     },
     "optionsAutoFillRelevantCredentialHelpText": {
@@ -979,11 +979,11 @@
         "description": "Auto-Fill Relevant Credential option help text."
     },
     "optionsAutoFillSingleEntryWarning": {
-        "message": "警告！使用自動填入並不安全。使用請自擔風險。KeePassXC-Browser 會嘗試自動偵測登錄欄位。然而，自動偵測可能不準確，導致在不安全的輸入欄位內填寫敏感資料。",
+        "message": "警告！使用自動填入並不安全。使用請自擔風險。sysPass-Browser 會嘗試自動偵測登錄欄位。然而，自動偵測可能不準確，導致在不安全的輸入欄位內填寫敏感資料。",
         "description": "Auto-Fill Single Entry warning text."
     },
     "optionsAutoFillSingleTotpHelpText": {
-        "message": "只接受到一個項目時，KeePassXC-Browser 將自動填入 TOTP 欄位。",
+        "message": "只接受到一個項目時，sysPass-Browser 將自動填入 TOTP 欄位。",
         "description": "Auto-Fill Single TOTP field option help text."
     },
     "optionsAutocompleteUsernamesHelpText": {
@@ -1023,7 +1023,7 @@
         "description": "Download favicon after save help text."
     },
     "optionsAutoFillAndSendHelpText": {
-        "message": "如果發現頁面有可用憑證，且登入類型為 HTTP 基本認證請求，KeePassXC-Browser 將嘗試使用第一個獲取的憑證登入。若有多個憑證，您可以在彈出視窗選擇正確的憑證。即使此功能被啟用，您仍然可以手動填寫 HTTP 基本認證登入。",
+        "message": "如果發現頁面有可用憑證，且登入類型為 HTTP 基本認證請求，sysPass-Browser 將嘗試使用第一個獲取的憑證登入。若有多個憑證，您可以在彈出視窗選擇正確的憑證。即使此功能被啟用，您仍然可以手動填寫 HTTP 基本認證登入。",
         "description": "Auto-Fill And Send option help text."
     },
     "optionsAutoFillAndSendHelpTextSecond": {
@@ -1039,7 +1039,7 @@
         "description": "Clear credentials timeout help text."
     },
     "optionsVersionInfoText": {
-        "message": "KeePassXC-Browser 需要 KeePassXC 以檢索憑證。",
+        "message": "sysPass-Browser 需要 sysPass 以檢索憑證。",
         "description": "Settings page version info text."
     },
     "optionsVersionDownload": {
@@ -1047,20 +1047,20 @@
         "description": "Settings page download link."
     },
     "optionsVersionRunning": {
-        "message": "您正在執行的 KeePassXC 版本：$1",
-        "description": "Settings page info text of user's KeePassXC version."
+        "message": "您正在執行的 sysPass 版本：$1",
+        "description": "Settings page info text of user's sysPass version."
     },
     "optionsLatestVersion": {
-        "message": "最新可用的 KeePassXC 版本：$1",
-        "description": "Settings page info text about the latest KeePassXC version."
+        "message": "最新可用的 sysPass 版本：$1",
+        "description": "Settings page info text about the latest sysPass version."
     },
-    "optionsKeePassXCVersionRequired": {
-        "message": "需要 KeePassXC 版本： $1",
-        "description": "KeePassXC version requirement text."
+    "optionssysPassVersionRequired": {
+        "message": "需要 sysPass 版本： $1",
+        "description": "sysPass version requirement text."
     },
-    "optionsMinimumKeePassXCVersionRequired": {
-        "message": "此擴展需要 KeePassXC 版本：$1。更早的版本可能導致意外行為。",
-        "description": "KeePassXC minimum version requirement text."
+    "optionsMinimumsysPassVersionRequired": {
+        "message": "此擴展需要 sysPass 版本：$1。更早的版本可能導致意外行為。",
+        "description": "sysPass minimum version requirement text."
     },
     "optionsDefault": {
         "message": "預設值：$1",
@@ -1103,7 +1103,7 @@
         "description": "Reset all settings dialog text."
     },
     "optionsConnectedDatabasesText": {
-        "message": "已連接至 KeePassXC-Browser 的資料庫。",
+        "message": "已連接至 sysPass-Browser 的資料庫。",
         "description": "Info text about connected databases."
     },
     "optionsConnectedDatabasesNotFound": {
@@ -1235,11 +1235,11 @@
         "description": "Table caption of Custom Login Fields page."
     },
     "optionsCustomFieldsTabHelpTextFirst": {
-        "message": "若 KeePassXC-Browser 偵測的登入欄位有誤，您可以自行指定正確的欄位。",
+        "message": "若 sysPass-Browser 偵測的登入欄位有誤，您可以自行指定正確的欄位。",
         "description": "Saved Custom Login Fields info text, first part."
     },
     "optionsCustomFieldsTabHelpTextSecond": {
-        "message": "前往頁面並點擊 KeePassXC-Browser 圖示，然後選擇",
+        "message": "前往頁面並點擊 sysPass-Browser 圖示，然後選擇",
         "description": "Saved Custom Login Fields info text, second part."
     },
     "optionsCustomFieldsTabHelpTextThird": {
@@ -1255,7 +1255,7 @@
         "description": "Confirmation text when removing saved Custom Login Fields."
     },
     "optionsCustomFieldsConfirmationHelpText": {
-        "message": "KeePassXC-Browser 將在您下次訪問頁面時自動偵測登入欄位。",
+        "message": "sysPass-Browser 將在您下次訪問頁面時自動偵測登入欄位。",
         "description": "Part of confirmation text when removing saved Custom Login Fields."
     },
     "optionsSitePreferencesNotFound": {
@@ -1279,7 +1279,7 @@
         "description": "Site Preferences info text, third part."
     },
     "optionsSitePreferencesTabHelpTextFourth": {
-        "message": "「僅用戶名稱」偵測允許 KeePassXC-Browser 在訪問用戶名稱與密碼不在同一頁面的網站時，仍可以填寫登入內容。",
+        "message": "「僅用戶名稱」偵測允許 sysPass-Browser 在訪問用戶名稱與密碼不在同一頁面的網站時，仍可以填寫登入內容。",
         "description": "Site Preferences info text, fourth part."
     },
     "optionsSitePreferencesImprovedInputFieldDetectionHelpText": {
@@ -1303,7 +1303,7 @@
         "description": "Confirmation text when removing site from Site Preferences."
     },
     "optionsSitePreferencesConfirmationHelpText": {
-        "message": "KeePassXC-Browser 將對此網站啟用所有功能並移除「僅用戶名稱」偵測。",
+        "message": "sysPass-Browser 將對此網站啟用所有功能並移除「僅用戶名稱」偵測。",
         "description": "Part of confirmation text when removing Site Preferences."
     },
     "optionsSitePreferencesTableCaption": {
@@ -1315,28 +1315,28 @@
         "description": "Title text of select element in Site Preferences."
     },
     "optionsAboutChrome": {
-        "message": "瀏覽 Chrome 線上應用程式商店上的 KeePassXC-Browser。",
+        "message": "瀏覽 Chrome 線上應用程式商店上的 sysPass-Browser。",
         "description": "About page link to Chrome Web Store."
     },
     "optionsAboutMozilla": {
-        "message": "瀏覽 Mozilla 附加元件站上的 KeePassXC-Browser。",
+        "message": "瀏覽 Mozilla 附加元件站上的 sysPass-Browser。",
         "description": "About page link to AMO."
     },
     "optionsAboutEdge": {
-        "message": "瀏覽 Edge 附加元件網頁上的 KeePassXC-Browser。",
+        "message": "瀏覽 Edge 附加元件網頁上的 sysPass-Browser。",
         "description": "About page link to Edge Add-ons page."
     },
     "optionsAboutGitHub": {
-        "message": "瀏覽 GitHub 上的 KeePassXC-Browser。",
+        "message": "瀏覽 GitHub 上的 sysPass-Browser。",
         "description": "About page link to GitHub."
     },
     "optionsAboutExtensionVersion": {
-        "message": "KeePassXC-Browser 版本：$1",
+        "message": "sysPass-Browser 版本：$1",
         "description": "About page text of extension version."
     },
-    "optionsAboutKeePassXCVersion": {
-        "message": "KeePassXC 版本：$1",
-        "description": "About page text of KeePassXC version."
+    "optionsAboutsysPassVersion": {
+        "message": "sysPass 版本：$1",
+        "description": "About page text of sysPass version."
     },
     "optionsAboutContributors": {
         "message": "貢獻者",
@@ -1415,7 +1415,7 @@
         "description": "Enabled passkeys fallback option text."
     },
     "optionsPasskeysEnableFallbackHelpText": {
-        "message": "啟用時，如果對 KeePassXC 的請求失敗或被取消，將觸發瀏覽器自身的內置通行密鑰請求。如果停用，則必須與 KeePassXC 建立連接，並將被取消的請求視為失敗。預設為啟用。",
+        "message": "啟用時，如果對 sysPass 的請求失敗或被取消，將觸發瀏覽器自身的內置通行密鑰請求。如果停用，則必須與 sysPass 建立連接，並將被取消的請求視為失敗。預設為啟用。",
         "description": "Passkeys fallback option help text."
     },
     "openNewTab": {
@@ -1435,7 +1435,7 @@
         "description": "Lock database button title text."
     },
     "welcomeText": {
-        "message": "歡迎使用 KeePassXC-Browser！",
+        "message": "歡迎使用 sysPass-Browser！",
         "description": "Main title of Getting Started page."
     },
     "documentationGettingStarted": {
@@ -1451,8 +1451,8 @@
         "description": "Troubleshooting Guide text."
     },
     "gettingStartedWelcomeText": {
-        "message": "歡迎使用 KeePassXC-Browser，這是 KeePassXC 的官方瀏覽器擴展。",
-        "description": "Welcome to KeePassXC-Browser, the official browser extension for KeePassXC."
+        "message": "歡迎使用 sysPass-Browser，這是 sysPass 的官方瀏覽器擴展。",
+        "description": "Welcome to sysPass-Browser, the official browser extension for sysPass."
     },
     "gettingStartedSecondWelcomeText": {
         "message": "請閱覽預設設定並檢查所有偏好選項。",
